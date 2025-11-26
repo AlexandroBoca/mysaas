@@ -22,13 +22,25 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createSupabaseClient()
+  const [supabase, setSupabase] = useState<any>(null)
+
+  useEffect(() => {
+    try {
+      const client = createSupabaseClient()
+      setSupabase(client)
+    } catch (error) {
+      console.error('Failed to create Supabase client:', error)
+      setIsLoading(false)
+    }
+  }, [])
 
   const currentPlan = profile?.subscription_tier 
     ? PRICING_PLANS[profile.subscription_tier as keyof typeof PRICING_PLANS] || null
     : PRICING_PLANS.free
 
   const fetchBillingData = async () => {
+    if (!supabase) return
+    
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -67,6 +79,8 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const upgradePlan = async (priceId: string) => {
+    if (!supabase) throw new Error('Supabase client not initialized')
+    
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
@@ -102,6 +116,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const cancelSubscription = async () => {
+    if (!supabase) throw new Error('Supabase client not initialized')
     if (!subscription?.paddle_subscription_id) {
       throw new Error('No active subscription found')
     }
@@ -130,6 +145,8 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const openCustomerPortal = async () => {
+    if (!supabase) throw new Error('Supabase client not initialized')
+    
     try {
       const response = await fetch('/api/billing/portal', {
         method: 'POST',
@@ -161,8 +178,10 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    fetchBillingData()
-  }, [])
+    if (supabase) {
+      fetchBillingData()
+    }
+  }, [supabase])
 
   const value: BillingContextType = {
     profile,

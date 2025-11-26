@@ -211,10 +211,20 @@ export default function Login() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mb-2">
               Don't have an account?{' '}
               <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
                 Sign up
+              </Link>
+            </p>
+            <p className="text-xs text-gray-500">
+              By signing in, you agree to our{' '}
+              <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
+                Privacy Policy
               </Link>
             </p>
           </div>

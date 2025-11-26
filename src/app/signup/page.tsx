@@ -232,13 +232,13 @@ export default function Signup() {
               />
               <span className="ml-2 text-sm text-gray-600">
                 I agree to the{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-700">
+                <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
                   Terms of Service
-                </a>{' '}
+                </Link>{' '}
                 and{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-700">
+                <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
                   Privacy Policy
-                </a>
+                </Link>
               </span>
             </div>
 

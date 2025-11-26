@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function createSupabaseServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Supabase environment variables are missing')
+  }
+
+  return createClient(
+    supabaseUrl,
+    supabaseServiceKey
+  )
+}
 
 // Verify Paddle webhook signature
 function verifyPaddleWebhook(payload: string, signature: string): boolean {
@@ -105,6 +114,8 @@ async function handleSubscriptionChange(subscriptionData: any) {
       return
     }
 
+    const supabase = createSupabaseServerClient()
+
     // Update user profile
     const { error: profileError } = await supabase
       .from('profiles')
@@ -157,6 +168,8 @@ async function handleSubscriptionCancelled(subscriptionData: any) {
       console.error('No user ID in subscription data')
       return
     }
+
+    const supabase = createSupabaseServerClient()
 
     // Update user profile to free tier
     const { error: profileError } = await supabase
