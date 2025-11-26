@@ -1,0 +1,17 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    PADDLE_API_KEY: process.env.PADDLE_API_KEY,
+    PADDLE_VENDOR_ID: process.env.PADDLE_VENDOR_ID,
+    PADDLE_SECRET_KEY: process.env.PADDLE_SECRET_KEY,
+    NEXT_PUBLIC_PADDLE_VENDOR_ID: process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID,
+    NEXT_PUBLIC_PADDLE_ENVIRONMENT: process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT,
+    PADDLE_WEBHOOK_SECRET: process.env.PADDLE_WEBHOOK_SECRET,
+  },
+};
+
+export default nextConfig;
