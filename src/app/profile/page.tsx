@@ -213,12 +213,13 @@ export default function Profile() {
         
         // Hash the new password and store in profiles table
         const hashedPassword = await hashPassword(newPassword)
-        const { error: profilePasswordError } = await (supabase
+        // @ts-ignore
+        const { error: profilePasswordError } = await supabase
           .from('profiles')
           .update({
             password_hash: hashedPassword
           })
-          .eq('id', user.id) as any)
+          .eq('id', user.id)
 
         if (profilePasswordError) {
           console.error('Error storing new password hash:', profilePasswordError)
@@ -355,12 +356,13 @@ export default function Profile() {
       
       // Hash the new password and store in profiles table
       const hashedPassword = await hashPassword(newPassword)
-      const { error: profilePasswordError } = await (supabase
+      // @ts-ignore
+      const { error: profilePasswordError } = await ((supabase
         .from('profiles')
         .update({
           password_hash: hashedPassword
         })
-        .eq('id', user.id) as any)
+        .eq('id', user.id)) as any)
 
       if (profilePasswordError) {
         console.error('Error storing new password hash:', profilePasswordError)
