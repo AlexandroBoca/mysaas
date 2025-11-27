@@ -9,6 +9,7 @@ export type Database = {
           full_name: string | null
           avatar_url: string | null
           credits_remaining: number
+          credits_used: number
           subscription_tier: string
           paddle_customer_id: string | null
           created_at: string
@@ -18,6 +19,7 @@ export type Database = {
           full_name?: string | null
           avatar_url?: string | null
           credits_remaining?: number
+          credits_used?: number
           subscription_tier?: string
           paddle_customer_id?: string | null
           created_at?: string
@@ -27,6 +29,7 @@ export type Database = {
           full_name?: string | null
           avatar_url?: string | null
           credits_remaining?: number
+          credits_used?: number
           subscription_tier?: string
           paddle_customer_id?: string | null
           created_at?: string

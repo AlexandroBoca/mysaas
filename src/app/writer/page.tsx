@@ -16,6 +16,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { deductCredit, getUserCredits } from '@/lib/credits'
 import Sidebar from '@/components/layout/Sidebar'
 import { useTheme } from '@/contexts/ThemeContext'
 import ThemeToggle from '@/components/ui/ThemeToggle'
@@ -35,6 +36,9 @@ export default function Writer() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [generating, setGenerating] = useState(false)
+  const [creditsRemaining, setCreditsRemaining] = useState(0)
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false)
+  const [showSaveToProjectPopup, setShowSaveToProjectPopup] = useState(false)
   const { theme } = useTheme()
   
   // Project form
@@ -127,6 +131,10 @@ export default function Writer() {
         router.push('/login')
         return
       }
+
+      // Fetch user credits
+      const credits = await getUserCredits(user.id)
+      setCreditsRemaining(credits)
       
       // Check for template data in URL params
       const templateData = searchParams.get('template')
@@ -181,6 +189,12 @@ export default function Writer() {
 
       setCurrentProject(data)
       setShowProjectForm(false)
+      
+      // Show success popup
+      setShowSuccessPopup(true)
+      setTimeout(() => {
+        setShowSuccessPopup(false)
+      }, 2000)
     } catch (error) {
       console.error('Error creating project:', error)
     } finally {
@@ -226,8 +240,26 @@ export default function Writer() {
     
     if (!finalPrompt.trim()) return
 
+    // Check credits before generation
+    if (creditsRemaining < 1) {
+      alert('You have insufficient credits. Please upgrade your plan to continue generating content.')
+      return
+    }
+
     setGenerating(true)
     try {
+      // Deduct 1 credit
+      const creditResult = await deductCredit(user.id)
+      
+      if (!creditResult.success) {
+        alert(creditResult.error || 'Failed to deduct credit. Please try again.')
+        setGenerating(false)
+        return
+      }
+
+      // Update credits remaining
+      setCreditsRemaining(creditResult.creditsRemaining || 0)
+
       // Simulate AI generation (replace with actual AI call)
       const mockResponse = await new Promise(resolve => {
         setTimeout(() => {
@@ -244,6 +276,7 @@ This demonstrates the AI content generation capability of your platform. Users c
       setGeneratedContent(mockResponse as string)
     } catch (error) {
       console.error('Error generating content:', error)
+      alert('An error occurred while generating content. Please try again.')
     } finally {
       setGenerating(false)
     }
@@ -251,27 +284,51 @@ This demonstrates the AI content generation capability of your platform. Users c
 
   const saveGeneration = async () => {
     if (!currentProject || !generatedContent.trim()) return
+    if (!user) {
+      console.error('No user found')
+      return
+    }
 
     try {
-      const finalPrompt = selectedTemplate ? buildPromptFromTemplate() : prompt
+      const finalPrompt = selectedTemplate ? buildPromptFromTemplate() : prompt || 'Generated content'
+      const modelToUse = selectedModel || 'gpt-4'
       
-      const { error } = await supabase
+      console.log('Saving generation:', {
+        project_id: currentProject.id,
+        user_id: user.id,
+        model_used: modelToUse,
+        prompt: finalPrompt,
+        output: generatedContent
+      })
+      
+      const { data, error } = await supabase
         .from('generations')
         .insert({
           project_id: currentProject.id,
           user_id: user.id,
-          model_used: selectedModel,
+          model_used: modelToUse,
           prompt: finalPrompt,
-          output: generatedContent,
-          tokens_used: Math.floor(Math.random() * 1000) + 100
+          output: generatedContent
         } as any)
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
-      // Redirect to project page
-      router.push(`/projects/${currentProject.id}`)
-    } catch (error) {
+      console.log('Generation saved successfully:', data)
+
+      // Show save to project popup
+      setShowSaveToProjectPopup(true)
+      
+      // Redirect to projects page after showing popup
+      setTimeout(() => {
+        setShowSaveToProjectPopup(false)
+        router.push('/projects')
+      }, 1500)
+    } catch (error: any) {
       console.error('Error saving generation:', error)
+      console.error('Error details:', error.message, error.details, error.hint)
     }
   }
 
@@ -678,6 +735,48 @@ This demonstrates the AI content generation capability of your platform. Users c
                       />
                     </div>
                     
+                    {/* Credits Display */}
+                    <div 
+                      className="p-3 rounded-lg border transition-colors duration-300"
+                      style={{
+                        backgroundColor: theme === 'dark' ? '#1f2937' : '#f9fafb',
+                        borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span 
+                          className="text-sm font-medium transition-colors duration-300"
+                          style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}
+                        >
+                          Credits Remaining
+                        </span>
+                        <span 
+                          className={`text-lg font-bold transition-colors duration-300 ${
+                            creditsRemaining < 1 ? 'text-red-600' : 
+                            creditsRemaining < 5 ? 'text-yellow-600' : 'text-green-600'
+                          }`}
+                        >
+                          {creditsRemaining}
+                        </span>
+                      </div>
+                      <p 
+                        className="text-xs mt-1 transition-colors duration-300"
+                        style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                      >
+                        Each generation costs 1 credit
+                      </p>
+                      {creditsRemaining < 1 && (
+                        <div className="mt-2">
+                          <button
+                            onClick={() => router.push('/billing')}
+                            className="text-xs text-blue-600 hover:text-blue-700 underline"
+                          >
+                            Upgrade your plan to get more credits
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    
                     <button
                       onClick={generateContent}
                       disabled={generating || (selectedTemplate ? Object.values(templateInputs).some(v => !v.trim()) : !prompt.trim())}
@@ -853,6 +952,40 @@ This demonstrates the AI content generation capability of your platform. Users c
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+          <div 
+            className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 pointer-events-auto transform transition-all duration-300 animate-pulse"
+            style={{
+              backgroundColor: theme === 'dark' ? '#10b981' : '#10b981',
+            }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="font-medium">Project created successfully!</span>
+          </div>
+        </div>
+      )}
+
+      {/* Save to Project Popup */}
+      {showSaveToProjectPopup && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+          <div 
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 pointer-events-auto transform transition-all duration-300 animate-pulse"
+            style={{
+              backgroundColor: theme === 'dark' ? '#3b82f6' : '#3b82f6',
+            }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V2" />
+            </svg>
+            <span className="font-medium">Saved to project!</span>
           </div>
         </div>
       )}

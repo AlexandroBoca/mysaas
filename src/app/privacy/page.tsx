@@ -5,7 +5,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import Link from 'next/link'
 
-export default function TermsPage() {
+export default function PrivacyPage() {
   const { theme } = useTheme()
 
   return (
@@ -30,7 +30,7 @@ export default function TermsPage() {
         </div>
       </div>
 
-      {/* Terms Content */}
+      {/* Privacy Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-8">
           {/* Header */}
@@ -39,7 +39,7 @@ export default function TermsPage() {
               className="text-3xl font-bold mb-4 transition-colors duration-300"
               style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
             >
-              Terms of Service
+              Privacy Policy
             </h2>
             <p 
               className="text-lg transition-colors duration-300"
@@ -56,35 +56,18 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                1. Acceptance of Terms
+                1. Information We Collect
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  By accessing and using TechFlow's AI content generation platform, you accept and agree to be bound by the terms and provision of this agreement.
-                </p>
-                <p>
-                  If you do not agree to abide by these terms, you are not authorized to use or access our services.
-                </p>
-              </div>
-            </section>
-
-            <section>
-              <h3 
-                className="text-xl font-semibold mb-4 transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-              >
-                2. Service Description
-              </h3>
-              <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
-                <p>
-                  TechFlow provides AI-powered content generation services including:
+                  We collect information you provide directly to us, such as when you create an account, 
+                  use our content generation services, or contact us for support.
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• Blog post and article generation</p>
-                  <p>• Marketing copy creation</p>
-                  <p>• Technical documentation</p>
-                  <p>• Creative writing assistance</p>
-                  <p>• Social media content creation</p>
+                  <p><strong>Account Information:</strong> Name, email address, and password</p>
+                  <p><strong>Content Data:</strong> Content you generate and store on our platform</p>
+                  <p><strong>Usage Data:</strong> How you interact with our services and features</p>
+                  <p><strong>Payment Information:</strong> Billing details for subscription services</p>
                 </div>
               </div>
             </section>
@@ -94,17 +77,16 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                3. User Accounts
+                2. How We Use Your Information
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
-                <p>
-                  To use our services, you must create an account and provide accurate information. You are responsible for:
-                </p>
+                <p>We use the information we collect to provide, maintain, and improve our services:</p>
                 <div className="pl-6 space-y-2">
-                  <p>• Maintaining the confidentiality of your account credentials</p>
-                  <p>• All activities that occur under your account</p>
-                  <p>• Notifying us of unauthorized account access</p>
-                  <p>• Providing accurate and up-to-date information</p>
+                  <p>• To provide and maintain our AI content generation services</p>
+                  <p>• To process transactions and manage your subscription</p>
+                  <p>• To communicate with you about your account and services</p>
+                  <p>• To improve our AI models and service quality</p>
+                  <p>• To detect and prevent fraud or abuse</p>
                 </div>
               </div>
             </section>
@@ -114,18 +96,17 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                4. Payment Terms
+                3. Data Security
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  Our services are offered on both free and paid subscription tiers:
+                  We implement appropriate technical and organizational measures to protect your data:
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• Free tier includes limited content generation credits</p>
-                  <p>• Paid tiers offer increased credits and advanced features</p>
-                  <p>• Subscriptions are billed monthly or annually</p>
-                  <p>• Prices are subject to change with 30 days notice</p>
-                  <p>• No refunds for unused portions of subscription periods</p>
+                  <p>• Encryption of data in transit and at rest</p>
+                  <p>• Regular security audits and assessments</p>
+                  <p>• Access controls and authentication systems</p>
+                  <p>• Secure data storage and processing practices</p>
                 </div>
               </div>
             </section>
@@ -135,18 +116,17 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                5. Content and Intellectual Property
+                4. Content Privacy
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  Regarding content generated through our services:
+                  Your generated content is private and secure:
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• You retain full ownership of content you generate</p>
-                  <p>• We do not claim rights to your generated content</p>
-                  <p>• Content may be used to improve our AI models with your consent</p>
-                  <p>• You are responsible for the accuracy and legality of generated content</p>
-                  <p>• We are not liable for content generated by our AI systems</p>
+                  <p>• Your content is not shared with other users</p>
+                  <p>• We do not claim ownership of your generated content</p>
+                  <p>• Content is used only to improve our AI services with your consent</p>
+                  <p>• You maintain full rights to your created content</p>
                 </div>
               </div>
             </section>
@@ -156,19 +136,17 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                6. Acceptable Use
+                5. Third-Party Services
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  You agree not to use our services to:
+                  We may use third-party services to operate our business:
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• Generate illegal, harmful, or malicious content</p>
-                  <p>• Violate any applicable laws or regulations</p>
-                  <p>• Infringe on intellectual property rights</p>
-                  <p>• Create content that is defamatory, obscene, or hateful</p>
-                  <p>• Attempt to reverse engineer or hack our systems</p>
-                  <p>• Use the service for spam or fraudulent activities</p>
+                  <p>• Payment processors for subscription management</p>
+                  <p>• Analytics services to improve our platform</p>
+                  <p>• Cloud infrastructure providers for data storage</p>
+                  <p>• Email services for user communications</p>
                 </div>
               </div>
             </section>
@@ -178,17 +156,18 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                7. Service Availability
+                6. Your Rights
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  We strive to maintain high service availability but cannot guarantee 100% uptime:
+                  You have the following rights regarding your data:
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• Services may be temporarily unavailable for maintenance</p>
-                  <p>• We are not liable for service interruptions</p>
-                  <p>• We will provide reasonable notice for planned maintenance</p>
-                  <p>• Service credits may be offered for extended outages</p>
+                  <p>• Access to your personal information</p>
+                  <p>• Correction of inaccurate data</p>
+                  <p>• Deletion of your account and data</p>
+                  <p>• Export of your data in a portable format</p>
+                  <p>• Opt-out of marketing communications</p>
                 </div>
               </div>
             </section>
@@ -198,74 +177,14 @@ export default function TermsPage() {
                 className="text-xl font-semibold mb-4 transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
               >
-                8. Limitation of Liability
+                7. Contact Us
               </h3>
               <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
                 <p>
-                  To the fullest extent permitted by law:
+                  If you have questions about this Privacy Policy, please contact us:
                 </p>
                 <div className="pl-6 space-y-2">
-                  <p>• Our services are provided "as is" without warranties</p>
-                  <p>• We are not liable for indirect, incidental, or consequential damages</p>
-                  <p>• Our total liability is limited to fees paid during the preceding 3 months</p>
-                  <p>• Some jurisdictions do not allow limitations on liability</p>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <h3 
-                className="text-xl font-semibold mb-4 transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-              >
-                9. Termination
-              </h3>
-              <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
-                <p>
-                  Either party may terminate this agreement:
-                </p>
-                <div className="pl-6 space-y-2">
-                  <p>• You may terminate your account at any time</p>
-                  <p>• We may terminate accounts for violations of these terms</p>
-                  <p>• Termination does not relieve you of payment obligations</p>
-                  <p>• We may delete account data 30 days after termination</p>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <h3 
-                className="text-xl font-semibold mb-4 transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-              >
-                10. Changes to Terms
-              </h3>
-              <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
-                <p>
-                  We reserve the right to modify these terms:
-                </p>
-                <div className="pl-6 space-y-2">
-                  <p>• Changes will be posted on this page</p>
-                  <p>• Email notification will be sent for material changes</p>
-                  <p>• Continued use constitutes acceptance of changes</p>
-                  <p>• Changes become effective 30 days after posting</p>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <h3 
-                className="text-xl font-semibold mb-4 transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-              >
-                11. Contact Information
-              </h3>
-              <div className="space-y-4" style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}>
-                <p>
-                  If you have questions about these Terms of Service, please contact us:
-                </p>
-                <div className="pl-6 space-y-2">
-                  <p><strong>Email:</strong> legal@techflow.com</p>
+                  <p><strong>Email:</strong> privacy@techflow.com</p>
                   <p><strong>Support:</strong> support@techflow.com</p>
                   <p><strong>Website:</strong> www.techflow.com</p>
                 </div>
@@ -282,9 +201,9 @@ export default function TermsPage() {
             }}
           >
             <p className="text-sm" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
-              These Terms of Service constitute a legally binding agreement between you and TechFlow. 
-              By using our AI content generation platform, you acknowledge that you have read, understood, 
-              and agree to be bound by these terms.
+              This Privacy Policy is designed to be transparent and easy to understand. We are committed to protecting 
+              your privacy and ensuring the security of your data. By using our services, you agree to the collection 
+              and use of information in accordance with this policy.
             </p>
           </div>
 

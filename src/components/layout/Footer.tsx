@@ -1,10 +1,10 @@
-import { Twitter, Linkedin, Github, Mail, Heart } from 'lucide-react'
+import { Twitter, Linkedin, Github, Mail, Heart, FileText, Shield, Users, HelpCircle, DollarSign } from 'lucide-react'
 
 const socialLinks = [
   { icon: Twitter, href: '#', label: 'Twitter' },
   { icon: Linkedin, href: '#', label: 'LinkedIn' },
   { icon: Github, href: '#', label: 'GitHub' },
-  { icon: Mail, href: '#', label: 'Email' }
+  { icon: Mail, href: 'mailto:support@contentai.com', label: 'Email' }
 ]
 
 const footerLinks = [
@@ -12,8 +12,8 @@ const footerLinks = [
     title: 'Product',
     links: [
       { name: 'Features', href: '#features' },
-      { name: 'Pricing', href: '#' },
-      { name: 'Documentation', href: '#' },
+      { name: 'Pricing', href: '/billing-preview' },
+      { name: 'Templates', href: '/templates' },
       { name: 'API Reference', href: '#' }
     ]
   },
@@ -23,23 +23,23 @@ const footerLinks = [
       { name: 'About', href: '#about' },
       { name: 'Blog', href: '#' },
       { name: 'Careers', href: '#' },
-      { name: 'Press', href: '#' }
+      { name: 'Contact', href: '#contact' }
     ]
   },
   {
     title: 'Resources',
     links: [
       { name: 'Help Center', href: '#' },
+      { name: 'Documentation', href: '#' },
       { name: 'Community', href: '#' },
-      { name: 'Guides', href: '#' },
-      { name: 'Partners', href: '#' }
+      { name: 'Status', href: '#' }
     ]
   },
   {
     title: 'Legal',
     links: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' },
       { name: 'Cookie Policy', href: '#' },
       { name: 'Security', href: '#' }
     ]
@@ -53,10 +53,10 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="lg:col-span-2">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-              TechFlow
+              ContentAI
             </h3>
             <p className="text-gray-400 leading-relaxed mb-6">
-              Building the future of digital experiences. Join thousands of companies already using our platform to grow their business.
+              Transform your content creation with AI-powered generation. Join thousands of creators and businesses using our platform to produce high-quality content at scale.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
@@ -94,10 +94,28 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 TechFlow. All rights reserved.
+              © 2024 ContentAI. All rights reserved.
             </p>
+            <div className="flex items-center space-x-6 text-sm">
+              <a href="/privacy" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <Shield className="h-4 w-4 mr-1" />
+                Privacy
+              </a>
+              <a href="/terms" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <FileText className="h-4 w-4 mr-1" />
+                Terms
+              </a>
+              <a href="/refund-policy" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <DollarSign className="h-4 w-4 mr-1" />
+                Refund Policy
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <HelpCircle className="h-4 w-4 mr-1" />
+                Help
+              </a>
+            </div>
             <p className="text-gray-400 text-sm flex items-center">
-              Made with <Heart className="h-4 w-4 mx-1 text-red-500 fill-current" /> by the TechFlow team
+              Made with <Heart className="h-4 w-4 mx-1 text-red-500 fill-current" /> by the ContentAI team
             </p>
           </div>
         </div>

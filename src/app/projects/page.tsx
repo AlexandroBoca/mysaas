@@ -78,31 +78,28 @@ export default function Projects() {
 
   const fetchStats = async (userId: string, userProjects: Project[]) => {
     try {
-      // Get all generations for this user
+      // Get all generations for this user (just count them)
       const { data: generations, error: genError } = await supabase
         .from('generations')
-        .select('tokens_used')
+        .select('id')
         .eq('user_id', userId)
 
       if (genError) throw genError
 
-      // Calculate total tokens used
-      const totalTokens = generations?.reduce((sum: number, gen: any) => sum + (gen.tokens_used || 0), 0) || 0
-
-      // Get user profile for credits
+      // Get user profile for credits and credits used
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('credits_remaining')
+        .select('credits_remaining, credits_used')
         .eq('id', userId)
         .single()
 
       if (profileError) throw profileError
 
-      // Count unique project types as templates used
+      // Set stats with actual credits used from profiles table
       setStats({
         totalProjects: userProjects.length,
         totalGenerations: generations?.length || 0,
-        creditsUsed: totalTokens,
+        creditsUsed: (profile as any)?.credits_used || 0,
         templatesUsed: (profile as any)?.credits_remaining || 0
       })
     } catch (error) {
@@ -257,7 +254,7 @@ export default function Projects() {
                 <ThemeToggle />
                 <button
                   onClick={() => router.push('/writer')}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                 >
                   <Plus className="h-5 w-5" />
                   <span>New Project</span>
@@ -297,7 +294,7 @@ export default function Projects() {
               </div>
               
               <button 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-300 hover:opacity-80"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-300 hover:opacity-80 cursor-pointer"
                 style={{
                   backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
                   borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
@@ -333,7 +330,7 @@ export default function Projects() {
               </p>
               <button
                 onClick={() => router.push('/writer')}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
               >
                 <Plus className="h-5 w-5" />
                 <span>Create Project</span>
@@ -366,7 +363,7 @@ export default function Projects() {
                       <div className="relative">
                         <button
                           onClick={() => setSelectedProject(project)}
-                          className="p-1 rounded-md transition-colors duration-300"
+                          className="p-1 rounded-md transition-colors duration-300 cursor-pointer"
                           style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
                         >
                           <MoreVertical className="h-4 w-4" />
@@ -383,7 +380,7 @@ export default function Projects() {
                             <div className="py-1">
                               <button
                                 onClick={() => router.push(`/projects/${project.id}`)}
-                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80"
+                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80 cursor-pointer"
                                 style={{ color: theme === 'dark' ? '#f9fafb' : '#374151' }}
                               >
                                 <Eye className="h-4 w-4 mr-2" />
@@ -391,7 +388,7 @@ export default function Projects() {
                               </button>
                               <button
                                 onClick={() => openEditModal(project)}
-                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80"
+                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80 cursor-pointer"
                                 style={{ color: theme === 'dark' ? '#f9fafb' : '#374151' }}
                               >
                                 <Edit className="h-4 w-4 mr-2" />
@@ -399,7 +396,7 @@ export default function Projects() {
                               </button>
                               <button
                                 onClick={() => openDeleteModal(project)}
-                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80"
+                                className="flex items-center px-4 py-2 text-sm w-full text-left transition-colors duration-300 hover:opacity-80 cursor-pointer"
                                 style={{ color: theme === 'dark' ? '#ef4444' : '#dc2626' }}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
@@ -435,7 +432,7 @@ export default function Projects() {
                       </span>
                       <button
                         onClick={() => router.push(`/projects/${project.id}`)}
-                        className="text-sm font-medium transition-colors duration-300 hover:opacity-80"
+                        className="text-sm font-medium transition-colors duration-300 hover:opacity-80 cursor-pointer"
                         style={{ color: theme === 'dark' ? '#3b82f6' : '#2563eb' }}
                       >
                         Open →

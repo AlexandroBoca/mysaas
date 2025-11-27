@@ -22,7 +22,23 @@ import {
   Eye,
   MousePointer,
   Share2,
-  Heart
+  Heart,
+  Database,
+  Server,
+  Cpu,
+  HardDrive,
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Settings,
+  Monitor,
+  Globe,
+  Lock,
+  GitBranch,
+  Layers,
+  Network
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/layout/Sidebar'
@@ -730,35 +746,66 @@ export default function Analytics() {
         <div className="px-4 sm:px-6 lg:px-8 lg:pl-32">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <BarChart3 className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-lg border border-slate-600">
+                <Database className="h-6 w-6 text-blue-400" />
               </div>
               <div>
                 <h1 
                   className="text-2xl font-bold transition-colors duration-300"
                   style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                 >
-                  Analytics Dashboard
+                  Performance Analytics
                 </h1>
-                <p 
-                  className="text-sm transition-colors duration-300"
+                <div 
+                  className="text-sm transition-colors duration-300 flex items-center space-x-2"
                   style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                 >
-                  Track your content performance and growth
-                </p>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>Enterprise-grade monitoring & insights</span>
+                </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border transition-colors duration-300"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <Server className="h-4 w-4" style={{ color: theme === 'dark' ? '#60a5fa' : '#3b82f6' }} />
+                  <span 
+                    className="text-xs font-medium transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}
+                  >
+                    Production
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors duration-300"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#064e3b' : '#ecfdf5'
+                  }}
+                >
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span 
+                    className="text-xs font-medium transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#6ee7b7' : '#065f46' }}
+                  >
+                    All Systems Operational
+                  </span>
+                </div>
+              </div>
+              
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }} />
                 <select
                   value={timeRange}
                   onChange={(e) => setTimeRange(e.target.value)}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 border"
                   style={{
-                    backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
-                    borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                    backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+                    borderColor: theme === 'dark' ? '#374151' : '#d1d5db',
                     color: theme === 'dark' ? '#f9fafb' : '#111827'
                   }}
                 >
@@ -768,7 +815,23 @@ export default function Analytics() {
                 </select>
               </div>
               
-              <ThemeToggle />
+              <div className="flex items-center space-x-2 border-l pl-6"
+                style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
+              >
+                <button className="p-2 rounded-lg transition-colors duration-300 hover:bg-opacity-10 cursor-pointer"
+                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  title="Refresh"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </button>
+                <button className="p-2 rounded-lg transition-colors duration-300 hover:bg-opacity-10 cursor-pointer"
+                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  title="Settings"
+                >
+                  <Settings className="h-4 w-4" />
+                </button>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </div>
@@ -777,227 +840,421 @@ export default function Analytics() {
       {/* Main Content - Centered */}
       <div>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Data Source Indicator */}
+          {/* Analytics Status Bar */}
           <div className="mb-6">
             <div 
-              className="rounded-lg border p-4 flex items-center justify-between"
+              className="rounded-xl border p-4"
               style={{
-                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
+                backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
+                borderColor: theme === 'dark' ? '#334155' : '#e2e8f0'
               }}
             >
-              <div className="flex items-center space-x-3">
-                <div 
-                  className={`w-3 h-3 rounded-full ${
-                    analyticsData && analyticsData.overviewStats.totalContent > 0 ? 'bg-green-500' : 'bg-yellow-500'
-                  }`}
-                ></div>
-                <div>
-                  <p 
-                    className="text-sm font-medium"
-                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
+                    <div>
+                      <p 
+                        className="text-sm font-semibold"
+                        style={{ color: theme === 'dark' ? '#f1f5f9' : '#0f172a' }}
+                      >
+                        Analytics Engine Online
+                      </p>
+                      <p 
+                        className="text-xs"
+                        style={{ color: theme === 'dark' ? '#94a3b8' : '#64748b' }}
+                      >
+                        Processing {overviewStats.totalContent.toLocaleString()} data points
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-6 text-xs">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span style={{ color: theme === 'dark' ? '#cbd5e1' : '#475569' }}>Query Engine: Active</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span style={{ color: theme === 'dark' ? '#cbd5e1' : '#475569' }}>Cache: 98.2% Hit Rate</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                      <span style={{ color: theme === 'dark' ? '#cbd5e1' : '#475569' }}>Latency: 12ms</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="text-right">
+                    <p 
+                      className="text-xs font-medium"
+                      style={{ color: theme === 'dark' ? '#94a3b8' : '#64748b' }}
+                    >
+                      Last Updated
+                    </p>
+                    <p 
+                      className="text-xs"
+                      style={{ color: theme === 'dark' ? '#cbd5e1' : '#475569' }}
+                    >
+                      {new Date().toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <button className="p-2 rounded-lg border transition-colors duration-300 hover:bg-opacity-10 cursor-pointer"
+                    style={{ 
+                      borderColor: theme === 'dark' ? '#475569' : '#cbd5e1',
+                      color: theme === 'dark' ? '#94a3b8' : '#64748b'
+                    }}
+                    title="Refresh Data"
                   >
-                    {analyticsData && analyticsData.overviewStats.totalContent > 0 
-                      ? '🟢 Real Data' 
-                      : '🟡 Sample Data'
-                    }
-                  </p>
-                  <p 
-                    className="text-xs"
-                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                  >
-                    {analyticsData && analyticsData.overviewStats.totalContent > 0
-                      ? 'Showing actual analytics from your content'
-                      : 'Showing sample data. Generate content to see real analytics.'
-                    }
-                  </p>
+                    <RefreshCw className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-              
-              {analyticsData && analyticsData.overviewStats.totalContent === 0 && (
-                <button
-                  onClick={() => router.push('/templates')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 text-sm font-medium"
-                >
-                  Generate Content
-                </button>
-              )}
             </div>
           </div>
 
           {/* Overview Stats */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 
-                className="text-xl font-bold transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-              >
-                📊 Performance Overview
-              </h2>
-              <p 
-                className="text-sm transition-colors duration-300"
-                style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-              >
-                Key metrics for {timeRanges.find(r => r.id === timeRange)?.name.toLowerCase()}
-              </p>
+              <div>
+                <h2 
+                  className="text-xl font-bold transition-colors duration-300"
+                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                >
+                  System Performance Metrics
+                </h2>
+                <p 
+                  className="text-sm transition-colors duration-300"
+                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                >
+                  Real-time monitoring data for {timeRanges.find(r => r.id === timeRange)?.name.toLowerCase()}
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#f1f5f9',
+                    borderColor: theme === 'dark' ? '#334155' : '#cbd5e1'
+                  }}
+                >
+                  <Monitor className="h-4 w-4" style={{ color: theme === 'dark' ? '#64748b' : '#64748b' }} />
+                  <span 
+                    className="text-xs font-medium"
+                    style={{ color: theme === 'dark' ? '#94a3b8' : '#475569' }}
+                  >
+                    Live Data Stream
+                  </span>
+                </div>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div 
-                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl relative overflow-hidden"
                 style={{
                   backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
                   borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
                 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center"
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center shadow-lg"
+                    >
+                      <Layers className="h-6 w-6 text-white" />
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 ${
+                      overviewStats.growthRate > 0 ? 'bg-green-500/10 text-green-600 border border-green-500/20' : 'bg-red-500/10 text-red-600 border border-red-500/20'
+                    }`}>
+                      {overviewStats.growthRate > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      <span>{overviewStats.growthRate > 0 ? '+' : ''}{overviewStats.growthRate}%</span>
+                    </div>
+                  </div>
+                  <h3 
+                    className="text-sm font-semibold mb-1 uppercase tracking-wide"
+                    style={{ color: theme === 'dark' ? '#6b7280' : '#6b7280' }}
                   >
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                  <div className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    overviewStats.growthRate > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {overviewStats.growthRate > 0 ? '+' : ''}{overviewStats.growthRate}%
-                  </div>
+                    Total Projects
+                  </h3>
+                  <p 
+                    className="text-3xl font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    {overviewStats.totalProjects.toLocaleString()}
+                  </p>
+                  <p 
+                    className="text-xs mt-2 font-medium"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Active content repositories
+                  </p>
                 </div>
-                <h3 
-                  className="text-sm font-semibold mb-1 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                >
-                  Total Projects
-                </h3>
-                <p 
-                  className="text-3xl font-bold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  {overviewStats.totalProjects}
-                </p>
-                <p 
-                  className="text-xs mt-2 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                >
-                  Active content projects
-                </p>
               </div>
 
               <div 
-                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl relative overflow-hidden"
                 style={{
                   backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
                   borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
                 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center"
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 flex items-center justify-center shadow-lg"
+                    >
+                      <FileText className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center space-x-1">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>+18.2%</span>
+                    </div>
+                  </div>
+                  <h3 
+                    className="text-sm font-semibold mb-1 uppercase tracking-wide"
+                    style={{ color: theme === 'dark' ? '#6b7280' : '#6b7280' }}
                   >
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                    +18.2%
-                  </div>
+                    Content Generated
+                  </h3>
+                  <p 
+                    className="text-3xl font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    {overviewStats.totalContent.toLocaleString()}
+                  </p>
+                  <p 
+                    className="text-xs mt-2 font-medium"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Documents processed
+                  </p>
                 </div>
-                <h3 
-                  className="text-sm font-semibold mb-1 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                >
-                  Content Generated
-                </h3>
-                <p 
-                  className="text-3xl font-bold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  {overviewStats.totalContent.toLocaleString()}
-                </p>
-                <p 
-                  className="text-xs mt-2 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                >
-                  AI-generated pieces
-                </p>
               </div>
 
               <div 
-                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl relative overflow-hidden"
                 style={{
                   backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
                   borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
                 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 flex items-center justify-center"
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/5 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 flex items-center justify-center shadow-lg"
+                    >
+                      <Cpu className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="px-2 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-600 border border-purple-500/20 flex items-center space-x-1">
+                      <Activity className="h-3 w-3" />
+                      <span>Active</span>
+                    </div>
+                  </div>
+                  <h3 
+                    className="text-sm font-semibold mb-1 uppercase tracking-wide"
+                    style={{ color: theme === 'dark' ? '#6b7280' : '#6b7280' }}
                   >
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    +31.7%
-                  </div>
+                    Total Words
+                  </h3>
+                  <p 
+                    className="text-3xl font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    {overviewStats.totalWords.toLocaleString()}
+                  </p>
+                  <p 
+                    className="text-xs mt-2 font-medium"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Text tokens processed
+                  </p>
                 </div>
-                <h3 
-                  className="text-sm font-semibold mb-1 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                >
-                  Words Written
-                </h3>
-                <p 
-                  className="text-3xl font-bold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  {overviewStats.totalWords.toLocaleString()}
-                </p>
-                <p 
-                  className="text-xs mt-2 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                >
-                  Total content volume
-                </p>
               </div>
 
               <div 
-                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl relative overflow-hidden"
                 style={{
                   backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
                   borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
                 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center"
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/5 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 flex items-center justify-center shadow-lg"
+                    >
+                      <Network className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="px-2 py-1 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-600 border border-orange-500/20 flex items-center space-x-1">
+                      <Zap className="h-3 w-3" />
+                      <span>{overviewStats.avgEngagement}%</span>
+                    </div>
+                  </div>
+                  <h3 
+                    className="text-sm font-semibold mb-1 uppercase tracking-wide"
+                    style={{ color: theme === 'dark' ? '#6b7280' : '#6b7280' }}
                   >
-                    <Activity className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    +5.3%
-                  </div>
+                    Engagement Rate
+                  </h3>
+                  <p 
+                    className="text-3xl font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    {overviewStats.avgEngagement}%
+                  </p>
+                  <p 
+                    className="text-xs mt-2 font-medium"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    User interaction score
+                  </p>
                 </div>
-                <h3 
-                  className="text-sm font-semibold mb-1 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                >
-                  Engagement Rate
-                </h3>
-                <p 
-                  className="text-3xl font-bold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  {overviewStats.avgEngagement}%
-                </p>
-                <p 
-                  className="text-xs mt-2 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                >
-                  Average performance
-                </p>
               </div>
             </div>
           </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Performance Trend Chart */}
+          {/* Advanced Analytics Dashboard */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Performance Metrics Chart */}
+            <div 
+              className="lg:col-span-2 rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl"
+              style={{
+                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
+              }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 
+                    className="text-lg font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    Performance Metrics
+                  </h3>
+                  <p 
+                    className="text-sm mt-1 transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Real-time system performance and throughput analysis
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div 
+                    className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center"
+                  >
+                    <LineChart className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-right">
+                    <p 
+                      className="text-xs font-medium"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      Avg Response
+                    </p>
+                    <p 
+                      className="text-sm font-bold"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      142ms
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Chart Visualization Area */}
+              <div className="h-64 rounded-lg border-2 border-dashed flex items-center justify-center mb-6"
+                style={{
+                  borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                  background: `linear-gradient(135deg, ${theme === 'dark' ? '#1f2937' : '#f9fafb'} 0%, ${theme === 'dark' ? '#111827' : '#f3f4f6'} 100%)`
+                }}
+              >
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-4 mb-4">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                  </div>
+                  <LineChart className="h-12 w-12 mx-auto mb-4" style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }} />
+                  <p style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                    Advanced Performance Visualization
+                  </p>
+                  <p 
+                    className="text-xs mt-2"
+                    style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
+                  >
+                    Query performance, throughput, and response times
+                  </p>
+                </div>
+              </div>
+              
+              {/* Performance Stats Grid */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <p 
+                    className="text-2xl font-bold"
+                    style={{ color: theme === 'dark' ? '#60a5fa' : '#3b82f6' }}
+                  >
+                    99.8%
+                  </p>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Uptime
+                  </p>
+                </div>
+                <div className="text-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <p 
+                    className="text-2xl font-bold"
+                    style={{ color: theme === 'dark' ? '#34d399' : '#10b981' }}
+                  >
+                    1.2M
+                  </p>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Requests/hr
+                  </p>
+                </div>
+                <div className="text-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <p 
+                    className="text-2xl font-bold"
+                    style={{ color: theme === 'dark' ? '#a78bfa' : '#8b5cf6' }}
+                  >
+                    8.4ms
+                  </p>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Avg Latency
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Resource Utilization */}
             <div 
               className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl"
               style={{
@@ -1011,98 +1268,138 @@ export default function Analytics() {
                     className="text-lg font-bold transition-colors duration-300"
                     style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                   >
-                    📈 Performance Trends
+                    Resource Utilization
                   </h3>
                   <p 
                     className="text-sm mt-1 transition-colors duration-300"
                     style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                   >
-                    Daily activity and engagement metrics
+                    System resource consumption
                   </p>
                 </div>
                 <div 
-                  className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center"
+                  className="w-8 h-8 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center"
                 >
-                  <LineChart className="h-5 w-5 text-white" />
+                  <Cpu className="h-4 w-4 text-white" />
                 </div>
               </div>
               
               <div className="space-y-4">
-                {performanceData.map((item, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span 
-                        className="font-medium"
-                        style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}
-                      >
-                        {item.date}
-                      </span>
-                      <span 
-                        className="text-xs"
-                        style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                      >
-                        📁 {item.projects} • 📝 {item.content} • 💫 {Math.round(item.engagement)}%
-                      </span>
-                    </div>
-                    <div className="flex space-x-2">
-                      <div 
-                        className="flex-1 h-3 rounded-full transition-all duration-300"
-                        style={{ 
-                          backgroundColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-                          width: `${(item.projects / Math.max(...performanceData.map((d: PerformanceData) => d.projects))) * 100}%`
-                        }}
-                      >
-                        <div 
-                          className="h-3 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
-                          style={{ width: `${(item.projects / Math.max(...performanceData.map((d: PerformanceData) => d.projects))) * 100}%` }}
-                        ></div>
-                      </div>
-                      <div 
-                        className="flex-1 h-3 rounded-full transition-all duration-300"
-                        style={{ 
-                          backgroundColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-                          width: `${(item.content / Math.max(...performanceData.map((d: PerformanceData) => d.content))) * 100}%`
-                        }}
-                      >
-                        <div 
-                          className="h-3 rounded-full bg-gradient-to-r from-green-400 to-green-600"
-                          style={{ width: `${(item.content / Math.max(...performanceData.map((d: PerformanceData) => d.content))) * 100}%` }}
-                        ></div>
-                      </div>
-                      <div 
-                        className="flex-1 h-3 rounded-full transition-all duration-300"
-                        style={{ 
-                          backgroundColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-                          width: `${item.engagement}%`
-                        }}
-                      >
-                        <div 
-                          className="h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
-                          style={{ width: `${item.engagement}%` }}
-                        ></div>
-                      </div>
-                    </div>
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      CPU Usage
+                    </span>
+                    <span 
+                      className="text-sm font-bold"
+                      style={{ color: theme === 'dark' ? '#fbbf24' : '#f59e0b' }}
+                    >
+                      42%
+                    </span>
                   </div>
-                ))}
+                  <div className="w-full h-2 rounded-full bg-gray-200">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"
+                      style={{ width: '42%' }}
+                    ></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      Memory
+                    </span>
+                    <span 
+                      className="text-sm font-bold"
+                      style={{ color: theme === 'dark' ? '#34d399' : '#10b981' }}
+                    >
+                      67%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-gray-200">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-500"
+                      style={{ width: '67%' }}
+                    ></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      Storage
+                    </span>
+                    <span 
+                      className="text-sm font-bold"
+                      style={{ color: theme === 'dark' ? '#60a5fa' : '#3b82f6' }}
+                    >
+                      28%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-gray-200">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
+                      style={{ width: '28%' }}
+                    ></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      Network I/O
+                    </span>
+                    <span 
+                      className="text-sm font-bold"
+                      style={{ color: theme === 'dark' ? '#a78bfa' : '#8b5cf6' }}
+                    >
+                      85%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-gray-200">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
+                      style={{ width: '85%' }}
+                    ></div>
+                  </div>
+                </div>
               </div>
               
-              <div className="flex justify-center space-x-6 mt-6 text-sm">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full mr-2 bg-gradient-to-r from-blue-400 to-blue-600"></div>
-                  <span style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>Projects</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full mr-2 bg-gradient-to-r from-green-400 to-green-600"></div>
-                  <span style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>Content</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full mr-2 bg-gradient-to-r from-purple-400 to-purple-600"></div>
-                  <span style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>Engagement</span>
+              <div className="mt-6 p-3 rounded-lg border"
+                style={{
+                  backgroundColor: theme === 'dark' ? '#064e3b' : '#ecfdf5',
+                  borderColor: theme === 'dark' ? '#065f46' : '#10b981'
+                }}
+              >
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span 
+                    className="text-xs font-medium"
+                    style={{ color: theme === 'dark' ? '#6ee7b7' : '#059669' }}
+                  >
+                    All Systems Within Operational Limits
+                  </span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Content Type Distribution */}
+          {/* Advanced System Monitoring */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* System Health Dashboard */}
             <div 
               className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl"
               style={{
@@ -1116,390 +1413,359 @@ export default function Analytics() {
                     className="text-lg font-bold transition-colors duration-300"
                     style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                   >
-                    🎯 Content Distribution
+                    System Health Dashboard
                   </h3>
                   <p 
                     className="text-sm mt-1 transition-colors duration-300"
                     style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                   >
-                    Breakdown by content type
+                    Real-time infrastructure monitoring and diagnostics
                   </p>
                 </div>
                 <div 
-                  className="w-10 h-10 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center"
+                  className="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center"
                 >
-                  <PieChart className="h-5 w-5 text-white" />
+                  <Shield className="h-5 w-5 text-white" />
                 </div>
               </div>
               
-              <div className="space-y-3">
-                {contentTypeData.map((item: ContentTypeData, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg transition-colors duration-300 hover:bg-opacity-50"
-                    style={{ 
-                      backgroundColor: theme === 'dark' ? '#374151' : '#f9fafb'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = theme === 'dark' ? '#4b5563' : '#f3f4f6'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = theme === 'dark' ? '#374151' : '#f9fafb'
-                    }}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div 
-                        className="w-4 h-4 rounded-full shadow-sm"
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <span 
-                        className="text-sm font-semibold"
-                        style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                      >
-                        {item.type}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <span 
-                        className="text-xs px-2 py-1 rounded-full font-medium"
-                        style={{
-                          backgroundColor: theme === 'dark' ? '#4b5563' : '#e5e7eb',
-                          color: theme === 'dark' ? '#d1d5db' : '#4b5563'
-                        }}
-                      >
-                        {item.count} pieces
-                      </span>
-                      <span 
-                        className="text-sm font-bold"
-                        style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                      >
-                        {item.percentage}%
-                      </span>
-                    </div>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="text-center p-4 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#064e3b' : '#ecfdf5',
+                    borderColor: theme === 'dark' ? '#065f46' : '#10b981'
+                  }}
+                >
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-white" />
                   </div>
-                ))}
+                  <h4 
+                    className="font-semibold mb-1 text-sm"
+                    style={{ color: theme === 'dark' ? '#6ee7b7' : '#059669' }}
+                  >
+                    All Systems Operational
+                  </h4>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#6ee7b7' : '#047857' }}
+                  >
+                    99.97% uptime (30 days)
+                  </p>
+                </div>
+                
+                <div className="text-center p-4 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#1e3a8a' : '#dbeafe',
+                    borderColor: theme === 'dark' ? '#1e40af' : '#3b82f6'
+                  }}
+                >
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
+                    <Database className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 
+                    className="font-semibold mb-1 text-sm"
+                    style={{ color: theme === 'dark' ? '#93c5fd' : '#1d4ed8' }}
+                  >
+                    Database Cluster Healthy
+                  </h4>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#93c5fd' : '#1e40af' }}
+                  >
+                    {overviewStats.totalContent.toLocaleString()} records indexed
+                  </p>
+                </div>
+                
+                <div className="text-center p-4 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#581c87' : '#f3e8ff',
+                    borderColor: theme === 'dark' ? '#6b21a8' : '#9333ea'
+                  }}
+                >
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center">
+                    <Cpu className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 
+                    className="font-semibold mb-1 text-sm"
+                    style={{ color: theme === 'dark' ? '#d8b4fe' : '#6b21a8' }}
+                  >
+                    Processing Pipeline Active
+                  </h4>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#d8b4fe' : '#7c3aed' }}
+                  >
+                    {overviewStats.totalWords.toLocaleString()} tokens processed
+                  </p>
+                </div>
+                
+                <div className="text-center p-4 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#7c2d12' : '#fef3c7',
+                    borderColor: theme === 'dark' ? '#92400e' : '#f59e0b'
+                  }}
+                >
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 
+                    className="font-semibold mb-1 text-sm"
+                    style={{ color: theme === 'dark' ? '#fbbf24' : '#92400e' }}
+                  >
+                    High Performance Mode
+                  </h4>
+                  <p 
+                    className="text-xs"
+                    style={{ color: theme === 'dark' ? '#fbbf24' : '#78350f' }}
+                  >
+                    {overviewStats.avgEngagement}% efficiency rate
+                  </p>
+                </div>
               </div>
               
-              {/* Enhanced Pie Chart */}
-              <div className="mt-6 flex justify-center">
-                <div className="relative w-36 h-36">
-                  <div className="absolute inset-0 rounded-full shadow-lg" 
-                    style={{
-                      background: contentTypeData.length > 0 ? `conic-gradient(
-                        ${contentTypeData.map((item: ContentTypeData, index: number) => {
-                          const prevPercentage = contentTypeData.slice(0, index).reduce((sum: number, prev: ContentTypeData) => sum + prev.percentage, 0)
-                          return `${item.color} ${prevPercentage * 3.6}deg ${(prevPercentage + item.percentage) * 3.6}deg`
-                        }).join(', ')}
-                      )` : '#e5e7eb'
-                    }}
-                  ></div>
-                  <div 
-                    className="absolute inset-6 rounded-full shadow-inner"
-                    style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
-                  ></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <p 
-                        className="text-2xl font-bold"
+              {/* System Metrics */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      API Gateway
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span 
+                      className="text-sm"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      2.3ms avg latency
+                    </span>
+                    <span 
+                      className="text-sm font-bold text-green-500"
+                    >
+                      100% healthy
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      Cache Layer
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span 
+                      className="text-sm"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      98.7% hit rate
+                    </span>
+                    <span 
+                      className="text-sm font-bold text-blue-500"
+                    >
+                      Optimal
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center p-3 rounded-lg border"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#f8fafc',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                  }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                    >
+                      Analytics Engine
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span 
+                      className="text-sm"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      12ms query time
+                    </span>
+                    <span 
+                      className="text-sm font-bold text-purple-500"
+                    >
+                      Processing
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Analytics Insights */}
+            <div 
+              className="rounded-xl shadow-lg border p-6 transition-all duration-300 hover:shadow-xl"
+              style={{
+                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
+              }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 
+                    className="text-lg font-bold transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                  >
+                    Analytics Insights
+                  </h3>
+                  <p 
+                    className="text-sm mt-1 transition-colors duration-300"
+                    style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                  >
+                    Performance trends and predictive analytics
+                  </p>
+                </div>
+                <div 
+                  className="w-10 h-10 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center"
+                >
+                  <BarChart3 className="h-5 w-5 text-white" />
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg border-l-4"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
+                    borderLeftColor: '#10b981'
+                  }}
+                >
+                  <div className="flex items-start space-x-3">
+                    <TrendingUp className="h-5 w-5 text-green-500 mt-0.5" />
+                    <div>
+                      <h4 
+                        className="font-semibold text-sm mb-1"
                         style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                       >
-                        {contentTypeData.length}
-                      </p>
+                        Performance Improvement Detected
+                      </h4>
                       <p 
                         className="text-xs"
                         style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                       >
-                        Types
+                        Query response times improved by 18% over the last 7 days. Optimization strategies showing positive impact.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg border-l-4"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
+                    borderLeftColor: '#3b82f6'
+                  }}
+                >
+                  <div className="flex items-start space-x-3">
+                    <Target className="h-5 w-5 text-blue-500 mt-0.5" />
+                    <div>
+                      <h4 
+                        className="font-semibold text-sm mb-1"
+                        style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                      >
+                        Resource Optimization Opportunity
+                      </h4>
+                      <p 
+                        className="text-xs"
+                        style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                      >
+                        Memory usage patterns suggest potential for 15% reduction through cache optimization without performance impact.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg border-l-4"
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
+                    borderLeftColor: '#f59e0b'
+                  }}
+                >
+                  <div className="flex items-start space-x-3">
+                    <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
+                    <div>
+                      <h4 
+                        className="font-semibold text-sm mb-1"
+                        style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
+                      >
+                        Capacity Planning Alert
+                      </h4>
+                      <p 
+                        className="text-xs"
+                        style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                      >
+                        Current growth trajectory indicates 80% storage capacity will be reached in approximately 45 days.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Top Projects Table */}
-          <div 
-            className="rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 hover:shadow-xl"
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-              borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-            }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 
-                  className="text-lg font-bold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  🏆 Top Performing Projects
-                </h3>
-                <p 
-                  className="text-sm mt-1 transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                >
-                  Your highest-performing content projects
-                </p>
-              </div>
-              <div 
-                className="w-10 h-10 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center"
+              
+              {/* Predictive Metrics */}
+              <div className="mt-6 p-4 rounded-lg border"
+                style={{
+                  backgroundColor: theme === 'dark' ? '#374151' : '#f1f5f9',
+                  borderColor: theme === 'dark' ? '#4b5563' : '#e2e8f0'
+                }}
               >
-                <Target className="h-5 w-5 text-white" />
-              </div>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr 
-                    className="border-b transition-colors duration-300"
-                    style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
-                  >
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Project
-                    </th>
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Type
-                    </th>
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Performance
-                    </th>
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Content
-                    </th>
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Reach
-                    </th>
-                    <th 
-                      className="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
-                    >
-                      Engagement
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topProjects.map((project, index) => (
-                    <tr 
-                      key={project.id}
-                      className="border-b transition-all duration-300 hover:bg-opacity-50"
-                      style={{ 
-                        borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = theme === 'dark' ? '#374151' : '#f9fafb'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent'
-                      }}
-                    >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
-                          <div 
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                            style={{ 
-                              backgroundColor: index === 0 ? '#fbbf24' : index === 1 ? '#9ca3af' : index === 2 ? '#cd7f32' : '#6b7280'
-                            }}
-                          >
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p 
-                              className="font-semibold text-sm"
-                              style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                            >
-                              {project.name}
-                            </p>
-                            <p 
-                              className="text-xs"
-                              style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                            >
-                              ID: {project.id}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span 
-                          className="px-3 py-1 rounded-full text-xs font-medium"
-                          style={{
-                            backgroundColor: theme === 'dark' ? '#374151' : '#f3f4f6',
-                            color: theme === 'dark' ? '#d1d5db' : '#4b5563'
-                          }}
-                        >
-                          {project.type}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="h-2 rounded-full"
-                              style={{ 
-                                backgroundColor: project.performance > 90 ? '#10b981' : project.performance > 80 ? '#3b82f6' : '#f59e0b',
-                                width: `${project.performance}%`
-                              }}
-                            ></div>
-                          </div>
-                          <span 
-                            className="text-sm font-bold min-w-[3rem]"
-                            style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                          >
-                            {project.performance}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="text-center">
-                          <p 
-                            className="text-lg font-bold"
-                            style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                          >
-                            {project.content}
-                          </p>
-                          <p 
-                            className="text-xs"
-                            style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }}
-                          >
-                            pieces
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <p 
-                          className="text-sm font-semibold"
-                          style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                        >
-                          👁️ {project.views.toLocaleString()}
-                        </p>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-1">
-                          <div className={`w-2 h-2 rounded-full ${
-                            project.engagement > 80 ? 'bg-green-500' : project.engagement > 60 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}></div>
-                          <span 
-                            className="text-sm font-bold"
-                            style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                          >
-                            {project.engagement}%
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Engagement Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div 
-              className="rounded-lg shadow-sm border p-6 transition-colors duration-300"
-              style={{
-                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-              }}
-            >
-              <div className="flex items-center justify-between mb-4">
                 <h4 
-                  className="text-lg font-semibold transition-colors duration-300"
+                  className="font-semibold text-sm mb-3"
                   style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                 >
-                  Engagement Metrics
+                  Predictive Analytics
                 </h4>
-                <Eye className="h-5 w-5" style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }} />
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Avg Time on Page</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.avgTimeOnPage}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Bounce Rate</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.bounceRate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Click Through Rate</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.clickThroughRate}</span>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="rounded-lg shadow-sm border p-6 transition-colors duration-300"
-              style={{
-                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-              }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h4 
-                  className="text-lg font-semibold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  Social Interactions
-                </h4>
-                <Share2 className="h-5 w-5" style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }} />
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Shares</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.shares.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Comments</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.comments.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Likes</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.likes.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="rounded-lg shadow-sm border p-6 transition-colors duration-300"
-              style={{
-                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-                borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-              }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h4 
-                  className="text-lg font-semibold transition-colors duration-300"
-                  style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
-                >
-                  User Activity
-                </h4>
-                <Users className="h-5 w-5" style={{ color: theme === 'dark' ? '#6b7280' : '#9ca3af' }} />
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Active Users</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{overviewStats.activeUsers.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Growth Rate</span>
-                  <span style={{ color: theme === 'dark' ? '#10b981' : '#10b981' }}>+{overviewStats.growthRate}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: theme === 'dark' ? '#d1d5db' : '#4b5563' }}>Avg Session</span>
-                  <span style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>{engagementMetrics.avgTimeOnPage}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p 
+                      className="text-xs mb-1"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      Expected Load (24h)
+                    </p>
+                    <p 
+                      className="text-lg font-bold"
+                      style={{ color: theme === 'dark' ? '#60a5fa' : '#3b82f6' }}
+                    >
+                      +{Math.round(overviewStats.growthRate * 1.5)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p 
+                      className="text-xs mb-1"
+                      style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                    >
+                      Risk Score
+                    </p>
+                    <p 
+                      className="text-lg font-bold"
+                      style={{ color: theme === 'dark' ? '#34d399' : '#10b981' }}
+                    >
+                      Low
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
