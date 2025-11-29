@@ -11,13 +11,22 @@ function createSupabaseServerClient() {
 
   return createClient(
     supabaseUrl,
-    supabaseServiceKey
+    supabaseServiceKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
   )
 }
 
 export async function POST(request: NextRequest) {
+  console.log('=== CHECKOUT API ROUTE CALLED ===')
   try {
     const { priceId, customerEmail } = await request.json()
+
+    console.log('Checkout request:', { priceId, customerEmail })
 
     if (!priceId) {
       return NextResponse.json(
@@ -26,80 +35,112 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get the user from the session
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Authorization header required' },
-        { status: 401 }
-      )
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    const supabase = createSupabaseServerClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Invalid authentication token' },
-        { status: 401 }
-      )
-    }
-
     // Get pricing plan
     const { PRICING_PLANS } = await import('@/lib/pricing')
+    
+    console.log('Available plans:', Object.keys(PRICING_PLANS))
+    
     const plan = PRICING_PLANS[priceId as keyof typeof PRICING_PLANS]
 
+    console.log('Plan found:', { plan: plan?.name, paddlePriceId: plan?.paddlePriceId, requestedPriceId: priceId })
+
     if (!plan || !plan.paddlePriceId) {
+      console.error('Plan not found or missing paddlePriceId:', { priceId, plan })
       return NextResponse.json(
-        { error: 'Invalid price plan' },
+        { 
+          error: 'Invalid price plan', 
+          details: `Plan not found or paddlePriceId not configured for priceId: ${priceId}. Please configure Paddle price IDs in your pricing configuration.` 
+        },
         { status: 400 }
       )
     }
 
     // Create Paddle checkout session
-    const paddleResponse = await fetch('https://api.paddle.com/checkout/sessions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.PADDLE_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: [
-          {
-            price_id: plan.paddlePriceId,
-            quantity: 1,
-          },
-        ],
-        customer_email: customerEmail || user.email,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true`,
-        custom_data: {
-          user_id: user.id,
-          price_id: priceId,
-        },
-      }),
+    const paddleApiKey = process.env.PADDLE_API_KEY
+    const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT || 'sandbox'
+    
+    console.log('Paddle config:', { 
+      hasApiKey: !!paddleApiKey, 
+      apiKeyPrefix: paddleApiKey?.substring(0, 20),
+      environment: paddleEnvironment 
+    })
+    
+    if (!paddleApiKey) {
+      throw new Error('Paddle API key is missing')
+    }
+
+    // Use sandbox URL for sandbox environment
+    const paddleBaseUrl = paddleEnvironment === 'sandbox' 
+      ? 'https://sandbox-api.paddle.com' 
+      : 'https://api.paddle.com'
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    
+    const checkoutData = {
+      items: [{
+        price_id: plan.paddlePriceId,
+        quantity: 1
+      }],
+      customer_email: customerEmail,
+      currency_code: 'USD',
+      return_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing?success=true`,
+      cancel_url: process.env.PADDLE_CANCEL_URL || `${baseUrl}/billing?canceled=true`,
+    }
+
+    console.log('Creating Paddle checkout with data:', checkoutData)
+    console.log('Paddle API URL:', `${paddleBaseUrl}/checkout/sessions`)
+    console.log('Paddle API Key (first 10 chars):', paddleApiKey.substring(0, 10))
+    console.log('Environment variables check:', {
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      PADDLE_RETURN_URL: process.env.PADDLE_RETURN_URL,
+      PADDLE_CANCEL_URL: process.env.PADDLE_CANCEL_URL,
     })
 
+    const paddleResponse = await fetch(`${paddleBaseUrl}/checkout/sessions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${paddleApiKey}`,
+        'Paddle-Version': '1',
+      },
+      body: JSON.stringify(checkoutData),
+    })
+
+    console.log('Paddle API response status:', paddleResponse.status)
+    console.log('Paddle API response headers:', Object.fromEntries(paddleResponse.headers))
+
     if (!paddleResponse.ok) {
-      const error = await paddleResponse.text()
-      console.error('Paddle API error:', error)
+      const errorText = await paddleResponse.text()
+      console.error('Paddle API error response:', errorText)
+      console.error('Request data sent:', checkoutData)
+      console.error('Response status:', paddleResponse.status)
+      console.error('Response headers:', Object.fromEntries(paddleResponse.headers))
+      
+      // Try to parse as JSON for better error handling
+      let errorDetails
+      try {
+        errorDetails = JSON.parse(errorText)
+      } catch {
+        errorDetails = errorText
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to create checkout session' },
+        { error: 'Failed to create Paddle checkout', details: errorDetails },
         { status: 500 }
       )
     }
 
-    const paddleData = await paddleResponse.json()
+    const paddleResult = await paddleResponse.json()
+    console.log('Paddle checkout created:', paddleResult)
 
     return NextResponse.json({
-      checkoutUrl: paddleData.data?.checkout_url,
-      sessionId: paddleData.data?.id,
+      checkoutId: paddleResult.data.id,
+      checkoutUrl: paddleResult.data.checkout_url,
     })
   } catch (error) {
     console.error('Checkout error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

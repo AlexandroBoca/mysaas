@@ -293,6 +293,219 @@ export default function Templates() {
       uses: 920,
       rating: 4.8,
       icon: <TrendingUp className="h-5 w-5" />
+    },
+    {
+      id: '23',
+      name: 'Press Release Template',
+      description: 'Professional press releases for product launches, announcements, and news',
+      category: 'business',
+      type: 'article',
+      prompt: 'Write a professional press release about [TOPIC] for [COMPANY]. Include: 1) FOR IMMEDIATE RELEASE header, 2) Compelling headline, 3) Dateline and location, 4) Lead paragraph with 5W\'s, 5) Company boilerplate, 6) Contact information. Quote from [SPOKESPERSON]. Target media: [MEDIA_TYPE].',
+      inputs: [
+        { name: 'TOPIC', placeholder: 'What\'s the news?', type: 'text' },
+        { name: 'COMPANY', placeholder: 'Company name', type: 'text' },
+        { name: 'SPOKESPERSON', placeholder: 'Quote source person', type: 'text' },
+        { name: 'MEDIA_TYPE', placeholder: 'Tech, business, lifestyle?', type: 'text' }
+      ],
+      estimatedTime: '8 min',
+      difficulty: 'intermediate',
+      uses: 420,
+      rating: 4.8,
+      icon: <Send className="h-5 w-5" />
+    },
+    {
+      id: '13',
+      name: 'Video Script - YouTube Tutorial',
+      description: 'Engaging YouTube tutorial scripts with hooks and calls-to-action',
+      category: 'video',
+      type: 'script',
+      prompt: 'Create a YouTube tutorial script about [TOPIC] for [AUDIENCE]. Structure: 1) Hook (first 15 seconds), 2) Introduction, 3) Main content with [NUMBER] steps, 4) Common mistakes to avoid, 5) Conclusion with call-to-action. Include visual cues and timing notes. Video length: [DURATION] minutes.',
+      inputs: [
+        { name: 'TOPIC', placeholder: 'Tutorial topic', type: 'text' },
+        { name: 'AUDIENCE', placeholder: 'Target audience', type: 'text' },
+        { name: 'NUMBER', placeholder: 'Number of steps', type: 'number' },
+        { name: 'DURATION', placeholder: 'Video length in minutes', type: 'number' }
+      ],
+      estimatedTime: '12 min',
+      difficulty: 'intermediate',
+      uses: 890,
+      rating: 4.9,
+      icon: <Zap className="h-5 w-5" />
+    },
+    {
+      id: '14',
+      name: 'Podcast Episode Outline',
+      description: 'Professional podcast episode structures with segments and transitions',
+      category: 'audio',
+      type: 'script',
+      prompt: 'Create a podcast episode outline about [TOPIC] for [SHOW_NAME]. Include: 1) Cold open with hook, 2) Introduction and guest intro, 3) [NUMBER] main segments with talking points, 4) Interview questions, 5) Call-to-action and outro. Episode length: [LENGTH] minutes. Style: [STYLE].',
+      inputs: [
+        { name: 'TOPIC', placeholder: 'Episode topic', type: 'text' },
+        { name: 'SHOW_NAME', placeholder: 'Podcast name', type: 'text' },
+        { name: 'NUMBER', placeholder: 'Number of segments', type: 'number' },
+        { name: 'LENGTH', placeholder: 'Episode duration', type: 'text' },
+        { name: 'STYLE', placeholder: 'Interview, solo, panel?', type: 'select' }
+      ],
+      estimatedTime: '10 min',
+      difficulty: 'advanced',
+      uses: 340,
+      rating: 4.7,
+      icon: <MessageSquare className="h-5 w-5" />
+    },
+    {
+      id: '15',
+      name: 'Technical Documentation',
+      description: 'Clear and comprehensive technical documentation for software and APIs',
+      category: 'technical',
+      type: 'article',
+      prompt: 'Write technical documentation for [PRODUCT/API]. Include: 1) Overview and purpose, 2) Prerequisites, 3) Installation/setup instructions, 4) [NUMBER] key features with examples, 5) Troubleshooting section, 6) API reference. Target audience: [AUDIENCE]. Include code examples.',
+      inputs: [
+        { name: 'PRODUCT/API', placeholder: 'Product or API name', type: 'text' },
+        { name: 'AUDIENCE', placeholder: 'Developers, end users?', type: 'text' },
+        { name: 'NUMBER', placeholder: 'Number of features to document', type: 'number' }
+      ],
+      estimatedTime: '15 min',
+      difficulty: 'advanced',
+      uses: 280,
+      rating: 4.6,
+      icon: <FileText className="h-5 w-5" />
+    },
+    {
+      id: '16',
+      name: 'Case Study Template',
+      description: 'Business case studies that demonstrate ROI and success stories',
+      category: 'business',
+      type: 'article',
+      prompt: 'Write a compelling case study about [CLIENT]\'s success with [SOLUTION]. Include: 1) Executive summary, 2) Client background and challenges, 3) Solution implementation, 4) Results with metrics, 5) Client testimonial, 6) Lessons learned. Industry: [INDUSTRY]. Key metrics: [METRICS].',
+      inputs: [
+        { name: 'CLIENT', placeholder: 'Client company name', type: 'text' },
+        { name: 'SOLUTION', placeholder: 'Product/service provided', type: 'text' },
+        { name: 'INDUSTRY', placeholder: 'Client industry', type: 'text' },
+        { name: 'METRICS', placeholder: 'Key success metrics', type: 'text' }
+      ],
+      estimatedTime: '12 min',
+      difficulty: 'intermediate',
+      uses: 560,
+      rating: 4.8,
+      icon: <TrendingUp className="h-5 w-5" />
+    },
+    {
+      id: '17',
+      name: 'Instagram Content Strategy',
+      description: 'Complete Instagram content calendar with captions and hashtags',
+      category: 'social',
+      type: 'social',
+      prompt: 'Create a [DURATION] Instagram content strategy for [BRAND]. Include: 1) Content pillars, 2) [NUMBER] post ideas with engaging captions, 3) Hashtag strategy (niche + broad), 4) Best posting times, 5) Story ideas. Target audience: [AUDIENCE]. Goal: [GOAL]. Tone: [TONE].',
+      inputs: [
+        { name: 'DURATION', placeholder: 'Weekly, monthly, quarterly?', type: 'select' },
+        { name: 'BRAND', placeholder: 'Brand name', type: 'text' },
+        { name: 'NUMBER', placeholder: 'Number of post ideas', type: 'number' },
+        { name: 'AUDIENCE', placeholder: 'Target audience', type: 'text' },
+        { name: 'GOAL', placeholder: 'Engagement, sales, awareness?', type: 'text' },
+        { name: 'TONE', placeholder: 'Professional, casual, trendy?', type: 'select' }
+      ],
+      estimatedTime: '15 min',
+      difficulty: 'intermediate',
+      uses: 1200,
+      rating: 4.9,
+      icon: <Tag className="h-5 w-5" />
+    },
+    {
+      id: '18',
+      name: 'Sales Proposal Template',
+      description: 'Professional sales proposals that win contracts and deals',
+      category: 'business',
+      type: 'article',
+      prompt: 'Write a comprehensive sales proposal for [CLIENT] for [PROJECT/SERVICE]. Include: 1) Executive summary, 2) Understanding of needs, 3) Proposed solution, 4) Timeline with milestones, 5) Pricing breakdown, 6) Terms and conditions. Budget: [BUDGET]. Decision maker: [DECISION_MAKER].',
+      inputs: [
+        { name: 'CLIENT', placeholder: 'Client company', type: 'text' },
+        { name: 'PROJECT/SERVICE', placeholder: 'What you\'re proposing', type: 'text' },
+        { name: 'BUDGET', placeholder: 'Project budget range', type: 'text' },
+        { name: 'DECISION_MAKER', placeholder: 'Who approves this?', type: 'text' }
+      ],
+      estimatedTime: '18 min',
+      difficulty: 'advanced',
+      uses: 380,
+      rating: 4.7,
+      icon: <Briefcase className="h-5 w-5" />
+    },
+    {
+      id: '19',
+      name: 'Recipe Blog Post',
+      description: 'Engaging recipe posts with ingredients, instructions, and storytelling',
+      category: 'food',
+      type: 'blog',
+      prompt: 'Write a recipe blog post for [DISH_NAME]. Include: 1) Story behind the recipe, 2) Ingredients list with quantities, 3) Step-by-step instructions, 4) Pro tips and variations, 5) Nutritional information, 6) Serving suggestions. Dietary: [DIETARY]. Difficulty: [DIFFICULTY]. Prep time: [PREP_TIME].',
+      inputs: [
+        { name: 'DISH_NAME', placeholder: 'Recipe name', type: 'text' },
+        { name: 'DIETARY', placeholder: 'Vegetarian, gluten-free, etc?', type: 'text' },
+        { name: 'DIFFICULTY', placeholder: 'Easy, medium, hard?', type: 'select' },
+        { name: 'PREP_TIME', placeholder: 'Preparation time', type: 'text' }
+      ],
+      estimatedTime: '8 min',
+      difficulty: 'beginner',
+      uses: 750,
+      rating: 4.8,
+      icon: <Heart className="h-5 w-5" />
+    },
+    {
+      id: '20',
+      name: 'Financial Report Summary',
+      description: 'Executive summaries for financial reports and investor updates',
+      category: 'finance',
+      type: 'article',
+      prompt: 'Write a financial report summary for [COMPANY] for [PERIOD]. Include: 1) Executive summary, 2) Key financial metrics, 3) Revenue highlights, 4) Expense analysis, 5) Profit margins, 6) Future outlook. Audience: [AUDIENCE]. Focus areas: [FOCUS_AREAS].',
+      inputs: [
+        { name: 'COMPANY', placeholder: 'Company name', type: 'text' },
+        { name: 'PERIOD', placeholder: 'Q1, Q2, annual, etc?', type: 'text' },
+        { name: 'AUDIENCE', placeholder: 'Investors, board, management?', type: 'text' },
+        { name: 'FOCUS_AREAS', placeholder: 'Key areas to highlight', type: 'text' }
+      ],
+      estimatedTime: '12 min',
+      difficulty: 'advanced',
+      uses: 290,
+      rating: 4.6,
+      icon: <TrendingUp className="h-5 w-5" />
+    },
+    {
+      id: '21',
+      name: 'Travel Guide Blog Post',
+      description: 'Comprehensive travel guides with tips, attractions, and local insights',
+      category: 'travel',
+      type: 'blog',
+      prompt: 'Write a travel guide for [DESTINATION] for [TRAVELER_TYPE]. Include: 1) Destination overview, 2) Best time to visit, 3) Top [NUMBER] attractions with details, 4) Local cuisine recommendations, 5) Transportation tips, 6) Budget estimates. Duration: [DURATION]. Interests: [INTERESTS].',
+      inputs: [
+        { name: 'DESTINATION', placeholder: 'City, country, region?', type: 'text' },
+        { name: 'TRAVELER_TYPE', placeholder: 'Backpacker, luxury, family?', type: 'text' },
+        { name: 'NUMBER', placeholder: 'Number of attractions', type: 'number' },
+        { name: 'DURATION', placeholder: 'Trip length', type: 'text' },
+        { name: 'INTERESTS', placeholder: 'History, food, adventure?', type: 'text' }
+      ],
+      estimatedTime: '10 min',
+      difficulty: 'intermediate',
+      uses: 620,
+      rating: 4.9,
+      icon: <Target className="h-5 w-5" />
+    },
+    {
+      id: '22',
+      name: 'Product Launch Campaign',
+      description: 'Complete multi-channel campaign for product launches',
+      category: 'marketing',
+      type: 'campaign',
+      prompt: 'Create a product launch campaign for [PRODUCT] targeting [AUDIENCE]. Include: 1) Campaign timeline, 2) Key messaging, 3) Email sequence, 4) Social media content, 5) Landing page copy, 6) Press release. Launch date: [DATE]. Budget: [BUDGET]. Channels: [CHANNELS].',
+      inputs: [
+        { name: 'PRODUCT', placeholder: 'Product name', type: 'text' },
+        { name: 'AUDIENCE', placeholder: 'Target customers', type: 'text' },
+        { name: 'DATE', placeholder: 'Launch date', type: 'text' },
+        { name: 'BUDGET', placeholder: 'Campaign budget', type: 'text' },
+        { name: 'CHANNELS', placeholder: 'Email, social, ads, PR?', type: 'text' }
+      ],
+      estimatedTime: '20 min',
+      difficulty: 'advanced',
+      uses: 410,
+      rating: 4.8,
+      icon: <Zap className="h-5 w-5" />
     }
   ]
 
@@ -304,7 +517,14 @@ export default function Templates() {
     { id: 'ecommerce', name: 'E-commerce', icon: <ShoppingBag className="h-4 w-4" /> },
     { id: 'business', name: 'Business', icon: <Briefcase className="h-4 w-4" /> },
     { id: 'education', name: 'Education', icon: <GraduationCap className="h-4 w-4" /> },
-    { id: 'health', name: 'Health', icon: <Heart className="h-4 w-4" /> }
+    { id: 'health', name: 'Health', icon: <Heart className="h-4 w-4" /> },
+    { id: 'video', name: 'Video', icon: <Zap className="h-4 w-4" /> },
+    { id: 'audio', name: 'Audio', icon: <MessageSquare className="h-4 w-4" /> },
+    { id: 'technical', name: 'Technical', icon: <FileText className="h-4 w-4" /> },
+    { id: 'food', name: 'Food', icon: <Heart className="h-4 w-4" /> },
+    { id: 'finance', name: 'Finance', icon: <TrendingUp className="h-4 w-4" /> },
+    { id: 'travel', name: 'Travel', icon: <Target className="h-4 w-4" /> },
+    { id: 'marketing', name: 'Marketing', icon: <Tag className="h-4 w-4" /> }
   ]
 
   const types = [
@@ -313,7 +533,9 @@ export default function Templates() {
     { id: 'blog', name: 'Blog Post' },
     { id: 'social', name: 'Social Media' },
     { id: 'ad', name: 'Advertisement' },
-    { id: 'article', name: 'Article' }
+    { id: 'article', name: 'Article' },
+    { id: 'script', name: 'Script' },
+    { id: 'campaign', name: 'Campaign' }
   ]
 
   useEffect(() => {
@@ -478,10 +700,10 @@ export default function Templates() {
                   placeholder="Search templates..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
                   style={{
                     backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
-                    borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#9ca3af',
                     color: theme === 'dark' ? '#f9fafb' : '#111827'
                   }}
                 />
@@ -496,10 +718,10 @@ export default function Templates() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+                  className="px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
                   style={{
                     backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
-                    borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#9ca3af',
                     color: theme === 'dark' ? '#f9fafb' : '#111827'
                   }}
                 >
@@ -513,10 +735,10 @@ export default function Templates() {
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+                className="px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
                 style={{
                   backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
-                  borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                  borderColor: theme === 'dark' ? '#4b5563' : '#9ca3af',
                   color: theme === 'dark' ? '#f9fafb' : '#111827'
                 }}
               >

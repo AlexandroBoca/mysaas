@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { createSupabaseClient } from '@/utils/supabase/client'
+import { supabase } from '@/lib/supabase'
 import { Profile, Subscription } from '@/types/database'
 import { PRICING_PLANS } from '@/lib/pricing'
 
@@ -22,25 +22,12 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [supabase, setSupabase] = useState<any>(null)
-
-  useEffect(() => {
-    try {
-      const client = createSupabaseClient()
-      setSupabase(client)
-    } catch (error) {
-      console.error('Failed to create Supabase client:', error)
-      setIsLoading(false)
-    }
-  }, [])
 
   const currentPlan = profile?.subscription_tier 
     ? PRICING_PLANS[profile.subscription_tier as keyof typeof PRICING_PLANS] || null
     : PRICING_PLANS.free
 
   const fetchBillingData = async () => {
-    if (!supabase) return
-    
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -57,13 +44,15 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       }
 
       // Fetch subscription
-      const { data: subscriptionData } = await supabase
+      const { data: subscriptionData, error: subscriptionError } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle() // Use maybeSingle() instead of single() to handle no results
 
-      if (subscriptionData) {
+      if (subscriptionError) {
+        console.error('Error fetching subscription:', subscriptionError)
+      } else if (subscriptionData) {
         setSubscription(subscriptionData)
       }
     } catch (error) {
@@ -79,26 +68,34 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const upgradePlan = async (priceId: string) => {
-    if (!supabase) throw new Error('Supabase client not initialized')
-    
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      // Get user authentication
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      
+      if (!user) {
+        throw new Error('User not authenticated')
+      }
+
+      console.log('Making checkout request with session:', { 
+        userId: user.id, 
+        email: user.email
+      })
 
       const response = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
         body: JSON.stringify({
           priceId,
-          customerEmail: user.email,
+          customerEmail: user.email || 'test@example.com',
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create checkout session')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('API Error:', JSON.stringify(errorData, null, 2))
+        throw new Error(errorData.error || 'Failed to create checkout session')
       }
 
       const data = await response.json()
@@ -116,8 +113,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const cancelSubscription = async () => {
-    if (!supabase) throw new Error('Supabase client not initialized')
-    if (!subscription?.paddle_subscription_id) {
+    if (!subscription?.subscription_id) {
       throw new Error('No active subscription found')
     }
 
@@ -126,15 +122,16 @@ export function BillingProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
         body: JSON.stringify({
-          subscriptionId: subscription.paddle_subscription_id,
+          subscriptionId: subscription.subscription_id,
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to cancel subscription')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Cancel API Error:', errorData)
+        throw new Error(errorData.error || 'Failed to cancel subscription')
       }
 
       await refreshBilling()
@@ -145,22 +142,25 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   const openCustomerPortal = async () => {
-    if (!supabase) throw new Error('Supabase client not initialized')
-    
+    if (!profile?.customer_id) {
+      throw new Error('No customer ID found')
+    }
+
     try {
       const response = await fetch('/api/billing/portal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
         body: JSON.stringify({
-          customerId: profile?.paddle_customer_id,
+          customerId: profile.customer_id,
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create portal link')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Portal API Error:', errorData)
+        throw new Error(errorData.error || 'Failed to create portal link')
       }
 
       const data = await response.json()
@@ -178,10 +178,8 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    if (supabase) {
-      fetchBillingData()
-    }
-  }, [supabase])
+    fetchBillingData()
+  }, [])
 
   const value: BillingContextType = {
     profile,

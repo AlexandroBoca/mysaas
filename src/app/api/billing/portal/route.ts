@@ -11,7 +11,13 @@ function createSupabaseServerClient() {
 
   return createClient(
     supabaseUrl,
-    supabaseServiceKey
+    supabaseServiceKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
   )
 }
 
@@ -26,61 +32,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get the user from the session
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Authorization header required' },
-        { status: 401 }
-      )
+    const paddleApiKey = process.env.PADDLE_API_KEY
+    const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT || 'sandbox'
+    
+    if (!paddleApiKey) {
+      throw new Error('Paddle API key is missing')
     }
 
-    const token = authHeader.replace('Bearer ', '')
-    const supabase = createSupabaseServerClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    const paddleBaseUrl = paddleEnvironment === 'sandbox' 
+      ? 'https://sandbox-api.paddle.com' 
+      : 'https://api.paddle.com'
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Invalid authentication token' },
-        { status: 401 }
-      )
-    }
-
-    // Create Paddle customer portal session
-    const paddleResponse = await fetch('https://api.paddle.com/customers', {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    
+    // Create customer portal session
+    const paddleResponse = await fetch(`${paddleBaseUrl}/customer-portal/sessions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PADDLE_SECRET_KEY}`,
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${paddleApiKey}`,
+        'Paddle-Version': '1',
       },
       body: JSON.stringify({
-        email: user.email,
-        name: user.user_metadata?.full_name || '',
-        custom_data: {
-          user_id: user.id,
-        },
+        customer_id: customerId,
+        return_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing`
       }),
     })
 
     if (!paddleResponse.ok) {
-      const error = await paddleResponse.text()
-      console.error('Paddle API error:', error)
+      const errorText = await paddleResponse.text()
+      console.error('Paddle portal error:', errorText)
+      
+      let errorDetails
+      try {
+        errorDetails = JSON.parse(errorText)
+      } catch {
+        errorDetails = errorText
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to create customer portal session' },
+        { error: 'Failed to create portal session', details: errorDetails },
         { status: 500 }
       )
     }
 
-    const paddleData = await paddleResponse.json()
+    const result = await paddleResponse.json()
+    console.log('Portal session created:', result)
 
     return NextResponse.json({
-      portalUrl: paddleData.data?.portal_url,
-      customerId: paddleData.data?.id,
+      portalUrl: result.data.url
     })
   } catch (error) {
-    console.error('Portal error:', error)
+    console.error('Customer portal error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

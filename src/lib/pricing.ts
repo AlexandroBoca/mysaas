@@ -1,4 +1,4 @@
-// Pricing plans configuration - Paddle integration
+// Pricing plans configuration
 export const PRICING_PLANS = {
   free: {
     name: 'Free',
@@ -22,7 +22,7 @@ export const PRICING_PLANS = {
     name: 'Starter',
     price: 9.99,
     priceId: 'starter',
-    paddlePriceId: 'pri_01hjxxxxxxx', // Replace with actual Paddle price ID
+    paddlePriceId: 'pri_01kb7je247rmae29jj49yxzk4z',
     features: [
       '10,000 AI tokens per month',
       '100 content generations',
@@ -37,11 +37,30 @@ export const PRICING_PLANS = {
       projects: 5,
     },
   },
+  'starter-business': {
+    name: 'Starter Business',
+    price: 99.99,
+    priceId: 'starter-business',
+    paddlePriceId: null, // Add your Paddle price ID here if needed
+    features: [
+      '10,000 AI credits per month',
+      'Team management (5 users)',
+      'Business templates',
+      'Email support',
+      'Basic analytics',
+      'SSO authentication'
+    ],
+    limits: {
+      tokens: 10000,
+      generations: 1000,
+      projects: -1,
+    },
+  },
   pro: {
     name: 'Pro',
     price: 29.99,
     priceId: 'pro',
-    paddlePriceId: 'pri_01hjyyyyyyy', // Replace with actual Paddle price ID
+    paddlePriceId: 'pri_01kb7qt9an30wrwg5z9ac78sy6',
     features: [
       '50,000 AI tokens per month',
       '500 content generations',
@@ -57,20 +76,20 @@ export const PRICING_PLANS = {
       projects: -1, // unlimited
     },
   },
-  enterprise: {
+  'enterprise-plan': {
     name: 'Enterprise',
-    price: 99.99,
-    priceId: 'enterprise',
-    paddlePriceId: 'pri_01hjzzzzzzz', // Replace with actual Paddle price ID
+    price: 299.99,
+    priceId: 'enterprise-plan',
+    paddlePriceId: 'pri_01kb7qy4eqzkqga3x5rj5nkb2w',
     features: [
-      'Unlimited AI tokens',
-      'Unlimited content generations',
-      'All templates + custom',
+      'Unlimited AI credits',
+      'Unlimited users',
+      'Custom solutions',
       '24/7 phone support',
-      'Unlimited projects',
       'White-label options',
-      'API access',
-      'Custom integrations',
+      'On-premise deployment',
+      'Dedicated account manager',
+      'Custom contracts'
     ],
     limits: {
       tokens: -1, // unlimited

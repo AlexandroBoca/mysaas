@@ -17,7 +17,8 @@ import {
   PenTool,
   Mail,
   MessageSquare,
-  BarChart3
+  BarChart3,
+  Calendar
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
@@ -30,6 +31,7 @@ const menuItems = [
   { icon: PenTool, label: 'Writer', href: '/writer' },
   { icon: Mail, label: 'Email Generator', href: '/email' },
   { icon: MessageSquare, label: 'Social Media', href: '/social' },
+  { icon: Calendar, label: 'Scheduler', href: '/scheduler' },
   { icon: BarChart3, label: 'Analytics', href: '/analytics' },
 ]
 

@@ -60,22 +60,28 @@ export async function POST(request: NextRequest) {
     const eventType = event.event_type
     const eventData = event.data
 
+    const supabase = createSupabaseServerClient()
+
     switch (eventType) {
       case 'subscription.created':
-      case 'subscription.updated':
-        await handleSubscriptionChange(eventData)
+      case 'subscription.activated':
+        await handleSubscriptionCreated(supabase, eventData)
         break
 
-      case 'subscription.cancelled':
-        await handleSubscriptionCancelled(eventData)
+      case 'subscription.updated':
+        await handleSubscriptionUpdated(supabase, eventData)
+        break
+
+      case 'subscription.canceled':
+        await handleSubscriptionCanceled(supabase, eventData)
         break
 
       case 'payment.succeeded':
-        await handlePaymentSucceeded(eventData)
+        await handlePaymentSucceeded(supabase, eventData)
         break
 
-      case 'payment.failed':
-        await handlePaymentFailed(eventData)
+      case 'transaction.completed':
+        await handleTransactionCompleted(supabase, eventData)
         break
 
       default:
@@ -92,133 +98,143 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleSubscriptionChange(subscriptionData: any) {
-  try {
-    const userId = subscriptionData.custom_data?.user_id
-    const priceId = subscriptionData.custom_data?.price_id
-    const paddleSubscriptionId = subscriptionData.id
-    const paddleCustomerId = subscriptionData.customer_id
-    const status = subscriptionData.status
+async function handleSubscriptionCreated(supabase: any, subscription: any) {
+  console.log('Creating subscription:', subscription.id)
 
-    if (!userId) {
-      console.error('No user ID in subscription data')
-      return
-    }
+  // Update or create user profile with subscription info
+  const planTier = await getPlanFromPriceId(subscription.items[0]?.price?.id)
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .upsert({
+      id: subscription.customer_id,
+      customer_id: subscription.customer_id,
+      subscription_tier: planTier,
+      updated_at: new Date().toISOString()
+    })
 
-    // Get pricing plan from price ID
-    const { PRICING_PLANS } = await import('@/lib/pricing')
-    const plan = PRICING_PLANS[priceId as keyof typeof PRICING_PLANS]
+  if (profileError) {
+    console.error('Error updating profile:', profileError)
+  }
 
-    if (!plan) {
-      console.error('Invalid price ID:', priceId)
-      return
-    }
+  // Create subscription record
+  const { error: subscriptionError } = await supabase
+    .from('subscriptions')
+    .upsert({
+      subscription_id: subscription.id,
+      user_id: subscription.customer_id,
+      customer_id: subscription.customer_id,
+      status: subscription.status,
+      price_id: subscription.items[0]?.price?.id,
+      provider_price_id: subscription.items[0]?.price?.id,
+      quantity: subscription.items[0]?.quantity || 1,
+      current_period_start: subscription.current_period_start,
+      current_period_end: subscription.current_period_end,
+      trial_end: subscription.trial_end,
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      canceled_at: subscription.canceled_at,
+      ended_at: subscription.ended_at,
+      created_at: subscription.created_at,
+      updated_at: subscription.updated_at
+    })
 
-    const supabase = createSupabaseServerClient()
+  if (subscriptionError) {
+    console.error('Error creating subscription:', subscriptionError)
+  }
+}
 
-    // Update user profile
+async function handleSubscriptionUpdated(supabase: any, subscription: any) {
+  console.log('Updating subscription:', subscription.id)
+
+  // Update subscription record
+  const { error: subscriptionError } = await supabase
+    .from('subscriptions')
+    .update({
+      status: subscription.status,
+      current_period_start: subscription.current_period_start,
+      current_period_end: subscription.current_period_end,
+      trial_end: subscription.trial_end,
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      canceled_at: subscription.canceled_at,
+      ended_at: subscription.ended_at,
+      updated_at: subscription.updated_at
+    })
+    .eq('subscription_id', subscription.id)
+
+  if (subscriptionError) {
+    console.error('Error updating subscription:', subscriptionError)
+  }
+
+  // Update profile subscription tier if changed
+  if (subscription.items && subscription.items[0]) {
+    const planTier = await getPlanFromPriceId(subscription.items[0].price.id)
     const { error: profileError } = await supabase
       .from('profiles')
       .update({
-        subscription_tier: plan.priceId,
-        paddle_customer_id: paddleCustomerId,
-        updated_at: new Date().toISOString(),
+        subscription_tier: planTier,
+        updated_at: new Date().toISOString()
       })
-      .eq('id', userId)
+      .eq('customer_id', subscription.customer_id)
 
     if (profileError) {
       console.error('Error updating profile:', profileError)
-      return
     }
-
-    // Update or create subscription record
-    const { error: subscriptionError } = await supabase
-      .from('subscriptions')
-      .upsert({
-        user_id: userId,
-        paddle_subscription_id: paddleSubscriptionId,
-        paddle_customer_id: paddleCustomerId,
-        status: status,
-        price_id: plan.priceId,
-        paddle_price_id: plan.paddlePriceId,
-        current_period_start: subscriptionData.current_period_start,
-        current_period_end: subscriptionData.current_period_end,
-        cancel_at_period_end: subscriptionData.cancel_at_period_end,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id'
-      })
-
-    if (subscriptionError) {
-      console.error('Error updating subscription:', subscriptionError)
-    }
-
-    console.log('Subscription updated successfully')
-  } catch (error) {
-    console.error('Error handling subscription change:', error)
   }
 }
 
-async function handleSubscriptionCancelled(subscriptionData: any) {
-  try {
-    const userId = subscriptionData.custom_data?.user_id
-    const paddleSubscriptionId = subscriptionData.id
+async function handleSubscriptionCanceled(supabase: any, subscription: any) {
+  console.log('Canceling subscription:', subscription.id)
 
-    if (!userId) {
-      console.error('No user ID in subscription data')
-      return
-    }
+  // Update subscription record
+  const { error: subscriptionError } = await supabase
+    .from('subscriptions')
+    .update({
+      status: 'canceled',
+      canceled_at: subscription.canceled_at,
+      updated_at: subscription.updated_at
+    })
+    .eq('subscription_id', subscription.id)
 
-    const supabase = createSupabaseServerClient()
+  if (subscriptionError) {
+    console.error('Error canceling subscription:', subscriptionError)
+  }
 
-    // Update user profile to free tier
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        subscription_tier: 'free',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId)
+  // Update profile to free tier
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      subscription_tier: 'free',
+      updated_at: new Date().toISOString()
+    })
+    .eq('customer_id', subscription.customer_id)
 
-    if (profileError) {
-      console.error('Error updating profile:', profileError)
-      return
-    }
-
-    // Update subscription record
-    const { error: subscriptionError } = await supabase
-      .from('subscriptions')
-      .update({
-        status: 'canceled',
-        canceled_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('paddle_subscription_id', paddleSubscriptionId)
-
-    if (subscriptionError) {
-      console.error('Error updating subscription:', subscriptionError)
-    }
-
-    console.log('Subscription cancelled successfully')
-  } catch (error) {
-    console.error('Error handling subscription cancellation:', error)
+  if (profileError) {
+    console.error('Error updating profile:', profileError)
   }
 }
 
-async function handlePaymentSucceeded(paymentData: any) {
-  try {
-    console.log('Payment succeeded:', paymentData)
-    // You can add additional logic here for payment success handling
-  } catch (error) {
-    console.error('Error handling payment success:', error)
-  }
+async function handlePaymentSucceeded(supabase: any, payment: any) {
+  console.log('Payment succeeded:', payment.id)
+
+  // You can add payment success handling here
+  // For example, sending confirmation emails, updating usage metrics, etc.
 }
 
-async function handlePaymentFailed(paymentData: any) {
-  try {
-    console.log('Payment failed:', paymentData)
-    // You can add additional logic here for payment failure handling
-  } catch (error) {
-    console.error('Error handling payment failure:', error)
+async function handleTransactionCompleted(supabase: any, transaction: any) {
+  console.log('Transaction completed:', transaction.id)
+
+  // Handle one-time payments if needed
+  // For subscriptions, the main handling is done in subscription events
+}
+
+async function getPlanFromPriceId(priceId: string): Promise<string> {
+  // Map Paddle price IDs to your internal plan names
+  const { PRICING_PLANS } = await import('@/lib/pricing')
+  
+  for (const [planKey, plan] of Object.entries(PRICING_PLANS)) {
+    if (plan.paddlePriceId === priceId) {
+      return planKey
+    }
   }
+  
+  return 'free' // Default fallback
 }

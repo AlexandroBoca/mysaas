@@ -77,7 +77,7 @@ export default function RefundPolicy() {
                 className="text-lg transition-colors duration-300"
                 style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
               >
-                Our commitment to customer satisfaction and fair refund practices in compliance with Paddle's buyer protection terms.
+                Our commitment to customer satisfaction and fair refund practices in compliance with payment processor's buyer protection terms.
               </p>
             </div>
 
@@ -106,7 +106,7 @@ export default function RefundPolicy() {
                       className="mb-3 transition-colors duration-300"
                       style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}
                     >
-                      We offer a minimum 14-day refund period for all subscription plans, in full compliance with Paddle's buyer protection terms. If you're not satisfied with TechFlow within the first 14 days of your purchase, you're eligible for a full refund.
+                      We offer a minimum 14-day refund period for all subscription plans, in full compliance with payment processor's buyer protection terms. If you're not satisfied with TechFlow within the first 14 days of your purchase, you're eligible for a full refund.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-start">
@@ -283,7 +283,7 @@ export default function RefundPolicy() {
                           className="text-sm transition-colors duration-300"
                           style={{ color: theme === 'dark' ? '#d1d5db' : '#374151' }}
                         >
-                          Approved refunds are processed via Paddle within 5-10 business days
+                          Approved refunds are processed via payment processor within 5-10 business days
                         </p>
                       </div>
                     </li>
@@ -291,7 +291,7 @@ export default function RefundPolicy() {
                 </div>
               </div>
 
-              {/* Paddle Compliance */}
+              {/* payment processor Compliance */}
               <div 
                 className="rounded-xl p-6 transition-colors duration-300"
                 style={{
@@ -306,13 +306,13 @@ export default function RefundPolicy() {
                       className="text-xl font-semibold mb-3 transition-colors duration-300"
                       style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}
                     >
-                      Paddle Buyer Protection
+                      payment processor Buyer Protection
                     </h3>
                     <p 
                       className="mb-3 transition-colors duration-300"
                       style={{ color: theme === 'dark' ? '#dbeafe' : '#1e3a8a' }}
                     >
-                      As a Paddle-powered service, we comply with all Paddle buyer protection policies and consumer rights regulations. This ensures fair treatment for all customers and provides additional safeguards for your purchases.
+                      As a payment processor-powered service, we comply with all payment processor buyer protection policies and consumer rights regulations. This ensures fair treatment for all customers and provides additional safeguards for your purchases.
                     </p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-start">
@@ -321,7 +321,7 @@ export default function RefundPolicy() {
                           className="transition-colors duration-300"
                           style={{ color: theme === 'dark' ? '#dbeafe' : '#1e3a8a' }}
                         >
-                          All transactions are processed securely through Paddle
+                          All transactions are processed securely through payment processor
                         </span>
                       </li>
                       <li className="flex items-start">
@@ -330,7 +330,7 @@ export default function RefundPolicy() {
                           className="transition-colors duration-300"
                           style={{ color: theme === 'dark' ? '#dbeafe' : '#1e3a8a' }}
                         >
-                          Additional dispute resolution options available through Paddle
+                          Additional dispute resolution options available through payment processor
                         </span>
                       </li>
                       <li className="flex items-start">

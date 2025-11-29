@@ -11,7 +11,13 @@ function createSupabaseServerClient() {
 
   return createClient(
     supabaseUrl,
-    supabaseServiceKey
+    supabaseServiceKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
   )
 }
 
@@ -26,55 +32,58 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get the user from the session
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Authorization header required' },
-        { status: 401 }
-      )
+    const paddleApiKey = process.env.PADDLE_API_KEY
+    const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT || 'sandbox'
+    
+    if (!paddleApiKey) {
+      throw new Error('Paddle API key is missing')
     }
 
-    const token = authHeader.replace('Bearer ', '')
-    const supabase = createSupabaseServerClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    const paddleBaseUrl = paddleEnvironment === 'sandbox' 
+      ? 'https://sandbox-api.paddle.com' 
+      : 'https://api.paddle.com'
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Invalid authentication token' },
-        { status: 401 }
-      )
-    }
-
-    // Cancel Paddle subscription
-    const paddleResponse = await fetch(`https://api.paddle.com/subscriptions/${subscriptionId}/cancel`, {
+    // Cancel the subscription in Paddle
+    const paddleResponse = await fetch(`${paddleBaseUrl}/subscriptions/${subscriptionId}/cancel`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PADDLE_SECRET_KEY}`,
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${paddleApiKey}`,
+        'Paddle-Version': '1',
       },
+      body: JSON.stringify({
+        effective_from: 'immediately' // or 'next_billing_period'
+      }),
     })
 
     if (!paddleResponse.ok) {
-      const error = await paddleResponse.text()
-      console.error('Paddle API error:', error)
+      const errorText = await paddleResponse.text()
+      console.error('Paddle cancel error:', errorText)
+      
+      let errorDetails
+      try {
+        errorDetails = JSON.parse(errorText)
+      } catch {
+        errorDetails = errorText
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to cancel subscription' },
+        { error: 'Failed to cancel subscription', details: errorDetails },
         { status: 500 }
       )
     }
 
-    const paddleData = await paddleResponse.json()
+    const result = await paddleResponse.json()
+    console.log('Subscription cancelled:', result)
 
     return NextResponse.json({
       success: true,
-      subscriptionId: paddleData.data?.id,
-      status: paddleData.data?.status,
+      message: 'Subscription cancelled successfully'
     })
   } catch (error) {
     console.error('Cancel subscription error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

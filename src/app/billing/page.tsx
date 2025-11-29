@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import Sidebar from '@/components/layout/Sidebar'
 import { useTheme } from '@/contexts/ThemeContext'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function BillingPage() {
@@ -31,6 +31,27 @@ export default function BillingPage() {
   const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null)
   const [cancelling, setCancelling] = useState(false)
   const { theme } = useTheme()
+  const searchParams = useSearchParams()
+  const [paymentStatus, setPaymentStatus] = useState<'success' | 'canceled' | 'error' | null>(null)
+
+  // Check URL parameters for payment status
+  useEffect(() => {
+    const success = searchParams.get('success')
+    const canceled = searchParams.get('canceled')
+    const error = searchParams.get('error')
+    
+    if (success === 'true') {
+      setPaymentStatus('success')
+      // Clear the URL parameter
+      router.replace('/billing')
+    } else if (canceled === 'true') {
+      setPaymentStatus('canceled')
+      router.replace('/billing')
+    } else if (error === 'true') {
+      setPaymentStatus('error')
+      router.replace('/billing')
+    }
+  }, [searchParams, router])
 
   // Check authentication using Supabase
   useEffect(() => {
@@ -100,6 +121,7 @@ export default function BillingPage() {
       await upgradePlan(priceId)
     } catch (error) {
       console.error('Upgrade failed:', error)
+      alert(`Upgrade failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setUpgradingPlan(null)
     }
@@ -130,49 +152,50 @@ export default function BillingPage() {
       icon: Star,
       color: theme === 'dark' ? 'bg-gray-600' : 'bg-gray-500',
       features: [
-        '100 AI credits per month',
+        '1,000 AI tokens per month',
+        '10 content generations',
         'Basic templates',
         'Community support',
-        '1 project'
+        'Single project',
       ],
-      limits: { tokens: 100, generations: 10, projects: 1 },
+      limits: { tokens: 1000, generations: 10, projects: 1 },
       popular: false
+    },
+    {
+      id: 'starter',
+      name: 'Starter',
+      price: '$9.99',
+      description: 'For creators and small projects',
+      icon: Zap,
+      color: theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500',
+      features: [
+        '10,000 AI tokens per month',
+        '100 content generations',
+        'Premium templates',
+        'Email support',
+        'Up to 5 projects',
+        'Basic analytics',
+      ],
+      limits: { tokens: 10000, generations: 100, projects: 5 },
+      popular: true
     },
     {
       id: 'pro',
       name: 'Pro',
-      price: '$19',
-      description: 'For professionals and creators',
-      icon: Zap,
-      color: theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500',
-      features: [
-        '1,000 AI credits per month',
-        'Advanced templates',
-        'Priority support',
-        '10 projects',
-        'Custom branding',
-        'API access'
-      ],
-      limits: { tokens: 1000, generations: 100, projects: 10 },
-      popular: true
-    },
-    {
-      id: 'premium',
-      name: 'Premium',
-      price: '$49',
-      description: 'For power users and teams',
+      price: '$29.99',
+      description: 'For professionals and teams',
       icon: Crown,
       color: theme === 'dark' ? 'bg-purple-600' : 'bg-purple-500',
       features: [
-        '5,000 AI credits per month',
-        'All templates unlocked',
-        'Dedicated support',
+        '50,000 AI tokens per month',
+        '500 content generations',
+        'All templates',
+        'Priority support',
         'Unlimited projects',
         'Advanced analytics',
-        'Team collaboration',
-        'Custom integrations'
+        'Custom branding',
       ],
-      limits: { tokens: 5000, generations: 500, projects: -1 },
+      limits: { tokens: 50000, generations: 500, projects: -1 },
       popular: false
     }
   ]
@@ -180,9 +203,9 @@ export default function BillingPage() {
   // Enterprise Plans
   const enterprisePlans = [
     {
-      id: 'starter',
-      name: 'Starter',
-      price: '$99',
+      id: 'starter-business',
+      name: 'Starter Business',
+      price: '$99.99',
       description: 'For small businesses',
       icon: Building,
       color: theme === 'dark' ? 'bg-green-600' : 'bg-green-500',
@@ -198,31 +221,12 @@ export default function BillingPage() {
       popular: false
     },
     {
-      id: 'business',
-      name: 'Business',
-      price: '$299',
-      description: 'For growing companies',
+      id: 'enterprise-plan',
+      name: 'Enterprise',
+      price: '$299.99',
+      description: 'For large organizations',
       icon: Shield,
       color: theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-500',
-      features: [
-        '25,000 AI credits per month',
-        'Team management (20 users)',
-        'Custom workflows',
-        'Priority support',
-        'Advanced analytics',
-        'Custom integrations',
-        'SLA guarantee'
-      ],
-      limits: { tokens: 25000, generations: 2500, projects: -1 },
-      popular: true
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      price: 'Custom',
-      description: 'For large organizations',
-      icon: Users,
-      color: theme === 'dark' ? 'bg-red-600' : 'bg-red-500',
       features: [
         'Unlimited AI credits',
         'Unlimited users',
@@ -234,7 +238,7 @@ export default function BillingPage() {
         'Custom contracts'
       ],
       limits: { tokens: -1, generations: -1, projects: -1 },
-      popular: false
+      popular: true
     }
   ]
 
@@ -274,6 +278,39 @@ export default function BillingPage() {
 
         {/* Billing Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Payment Status Messages */}
+          {paymentStatus && (
+            <Alert className={`mb-6 ${
+              paymentStatus === 'success' ? 'border-green-500 bg-green-50' :
+              paymentStatus === 'canceled' ? 'border-yellow-500 bg-yellow-50' :
+              'border-red-500 bg-red-50'
+            }`}>
+              {paymentStatus === 'success' && (
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 text-green-600 mr-2" />
+                  <AlertDescription className="text-green-800">
+                    Payment successful! Your subscription has been activated.
+                  </AlertDescription>
+                </div>
+              )}
+              {paymentStatus === 'canceled' && (
+                <div className="flex items-center">
+                  <X className="h-4 w-4 text-yellow-600 mr-2" />
+                  <AlertDescription className="text-yellow-800">
+                    Payment was canceled. You can try again anytime.
+                  </AlertDescription>
+                </div>
+              )}
+              {paymentStatus === 'error' && (
+                <div className="flex items-center">
+                  <X className="h-4 w-4 text-red-600 mr-2" />
+                  <AlertDescription className="text-red-800">
+                    Payment failed. Please try again or contact support.
+                  </AlertDescription>
+                </div>
+              )}
+            </Alert>
+          )}
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h2 
@@ -529,49 +566,7 @@ export default function BillingPage() {
             </Card>
           )}
 
-          {/* Usage Stats */}
-          {profile && (
-            <Card style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
-              <CardHeader>
-                <CardTitle>Current Usage</CardTitle>
-                <CardDescription>
-                  Your current usage this month
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center p-6 rounded-lg border transition-colors duration-300"
-                       style={{ borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb' }}>
-                    <div className="text-3xl font-bold mb-2" style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>
-                      {profile.credits_remaining}
-                    </div>
-                    <div className="text-sm" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
-                      Credits Remaining
-                    </div>
-                  </div>
-                  <div className="text-center p-6 rounded-lg border transition-colors duration-300"
-                       style={{ borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb' }}>
-                    <div className="text-3xl font-bold mb-2" style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>
-                      {currentPlan?.name || 'Free'}
-                    </div>
-                    <div className="text-sm" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
-                      Current Plan
-                    </div>
-                  </div>
-                  <div className="text-center p-6 rounded-lg border transition-colors duration-300"
-                       style={{ borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb' }}>
-                    <div className="text-3xl font-bold mb-2" style={{ color: theme === 'dark' ? '#f9fafb' : '#111827' }}>
-                      {subscription?.status === 'active' ? 'Active' : 'Inactive'}
-                    </div>
-                    <div className="text-sm" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
-                      Subscription Status
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </main>
+          </main>
       </div>
     </div>
   )

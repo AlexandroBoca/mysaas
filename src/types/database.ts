@@ -11,7 +11,7 @@ export type Database = {
           credits_remaining: number
           credits_used: number
           subscription_tier: string
-          paddle_customer_id: string | null
+          customer_id: string | null
           created_at: string
         }
         Insert: {
@@ -21,7 +21,7 @@ export type Database = {
           credits_remaining?: number
           credits_used?: number
           subscription_tier?: string
-          paddle_customer_id?: string | null
+          customer_id?: string | null
           created_at?: string
         }
         Update: {
@@ -31,7 +31,7 @@ export type Database = {
           credits_remaining?: number
           credits_used?: number
           subscription_tier?: string
-          paddle_customer_id?: string | null
+          customer_id?: string | null
           created_at?: string
         }
       }
@@ -98,11 +98,11 @@ export type Database = {
         Row: {
           id: string
           user_id: string
-          paddle_subscription_id: string
-          paddle_customer_id: string
+          subscription_id: string
+          customer_id: string
           status: 'active' | 'canceled' | 'past_due' | 'unpaid' | 'trialing' | 'paused'
           price_id: string
-          paddle_price_id: string
+          provider_price_id: string
           quantity: number
           current_period_start: string
           current_period_end: string
@@ -116,11 +116,11 @@ export type Database = {
         Insert: {
           id?: string
           user_id: string
-          paddle_subscription_id: string
-          paddle_customer_id: string
+          subscription_id: string
+          customer_id: string
           status: 'active' | 'canceled' | 'past_due' | 'unpaid' | 'trialing' | 'paused'
           price_id: string
-          paddle_price_id: string
+          provider_price_id: string
           quantity?: number
           current_period_start: string
           current_period_end: string
@@ -135,7 +135,7 @@ export type Database = {
           id?: string
           user_id?: string
           paddle_subscription_id?: string
-          paddle_customer_id?: string
+          customer_id?: string
           status?: 'active' | 'canceled' | 'past_due' | 'unpaid' | 'trialing' | 'paused'
           price_id?: string
           paddle_price_id?: string
