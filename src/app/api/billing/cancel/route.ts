@@ -43,13 +43,12 @@ export async function POST(request: NextRequest) {
       ? 'https://sandbox-api.paddle.com' 
       : 'https://api.paddle.com'
 
-    // Cancel the subscription in Paddle
+    // Cancel the subscription in Paddle with new API
     const paddleResponse = await fetch(`${paddleBaseUrl}/subscriptions/${subscriptionId}/cancel`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${paddleApiKey}`,
-        'Paddle-Version': '1',
       },
       body: JSON.stringify({
         effective_from: 'immediately' // or 'next_billing_period'

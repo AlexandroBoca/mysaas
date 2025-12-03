@@ -16,10 +16,13 @@ function createSupabaseServerClient() {
   )
 }
 
-// Verify Paddle webhook signature
+// Verify Paddle webhook signature with new API
 function verifyPaddleWebhook(payload: string, signature: string): boolean {
   const secret = process.env.PADDLE_WEBHOOK_SECRET
-  if (!secret) return false
+  if (!secret) {
+    console.error('PADDLE_WEBHOOK_SECRET is not configured')
+    return false
+  }
 
   const expectedSignature = crypto
     .createHmac('sha256', secret)

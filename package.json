@@ -17,7 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@paddle/paddle-js": "^1.5.1",
-    "@radix-ui/react-slot": "^1.2.4",
+        "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.85.0",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.3",

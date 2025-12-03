@@ -1,18 +1,18 @@
-// Paddle integration utilities
+// Paddle integration utilities with new API
 
 export interface PaddleConfig {
   environment: 'sandbox' | 'production'
-  vendorId: string
+  clientToken: string
   apiKey?: string
 }
 
 export function getPaddleConfig(): PaddleConfig {
   const environment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT as 'sandbox' | 'production' || 'sandbox'
-  const vendorId = process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID || ''
+  const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN || ''
   
   return {
     environment,
-    vendorId
+    clientToken
   }
 }
 
@@ -20,10 +20,10 @@ export function initializePaddle() {
   const config = getPaddleConfig()
   
   if (typeof window !== 'undefined') {
-    // Initialize Paddle.js
-    window.Paddle.Environment.set(config.environment)
-    window.Paddle.Setup({
-      vendor: parseInt(config.vendorId),
+    // Initialize Paddle.js with new API
+    window.Paddle.Initialize({
+      environment: config.environment,
+      token: config.clientToken,
       eventCallback: function(data: any) {
         console.log('Paddle event:', data)
         // Handle Paddle events here
@@ -32,19 +32,16 @@ export function initializePaddle() {
   }
 }
 
-// Type declarations for Paddle.js
+// Type declarations for Paddle.js (new API)
 declare global {
   interface Window {
     Paddle: {
-      Environment: {
-        set: (env: 'sandbox' | 'production') => void
-      }
-      Setup: (options: { vendor: number; eventCallback?: (data: any) => void }) => void
+      Initialize: (options: { environment: 'sandbox' | 'production'; token: string; eventCallback?: (data: any) => void }) => void
       Checkout: {
-        open: (options: { product?: number; price?: number; email?: string; quantity?: number }) => void
+        open: (options: { items: Array<{ priceId: string; quantity?: number }>; customer?: { email?: string } }) => void
       }
-      Product: {
-        getPrices: (productIds: number[], callback: (prices: any[]) => void) => void
+      Price: {
+        getPrices: (priceIds: string[], callback: (prices: any[]) => void) => void
       }
     }
   }
@@ -58,7 +55,7 @@ export function loadPaddleScript(): Promise<void> {
     }
 
     const script = document.createElement('script')
-    script.src = 'https://cdn.paddle.com/paddle/paddle.js'
+    script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js'
     script.async = true
     script.onload = () => {
       resolve()

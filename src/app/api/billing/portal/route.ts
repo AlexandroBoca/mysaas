@@ -43,18 +43,17 @@ export async function POST(request: NextRequest) {
       ? 'https://sandbox-api.paddle.com' 
       : 'https://api.paddle.com'
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mysaas-pearl.vercel.app'
     
-    // Create customer portal session
+    // Create customer portal session with new API
     const paddleResponse = await fetch(`${paddleBaseUrl}/customer-portal/sessions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${paddleApiKey}`,
-        'Paddle-Version': '1',
       },
       body: JSON.stringify({
-        customer_id: customerId,
+        customer: customerId,
         return_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing`
       }),
     })

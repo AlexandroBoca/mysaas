@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create Paddle checkout session
+    // Create Paddle checkout session with new API
     const paddleApiKey = process.env.PADDLE_API_KEY
     const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT || 'sandbox'
     
@@ -69,52 +69,54 @@ export async function POST(request: NextRequest) {
       throw new Error('Paddle API key is missing')
     }
 
-    // Use sandbox URL for sandbox environment
+    // Use Paddle API v2 (new version)
     const paddleBaseUrl = paddleEnvironment === 'sandbox' 
       ? 'https://sandbox-api.paddle.com' 
       : 'https://api.paddle.com'
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mysaas-pearl.vercel.app'
     
     const checkoutData = {
-      items: [{
-        price_id: plan.paddlePriceId,
-        quantity: 1
-      }],
+      items: [
+        {
+          price_id: plan.paddlePriceId,
+          quantity: 1
+        }
+      ],
       customer_email: customerEmail,
-      currency_code: 'USD',
-      return_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing?success=true`,
-      cancel_url: process.env.PADDLE_CANCEL_URL || `${baseUrl}/billing?canceled=true`,
+      business: {
+        name: 'MySaaS Business'
+      },
+      custom_data: {
+        userId: 'user-id-placeholder', // You'll need to get this from auth
+        priceId: priceId
+      },
+      checkout: {
+        return_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing?success=true`,
+        success_url: process.env.PADDLE_RETURN_URL || `${baseUrl}/billing?success=true`,
+        cancel_url: process.env.PADDLE_CANCEL_URL || `${baseUrl}/billing?canceled=true`
+      }
     }
 
     console.log('Creating Paddle checkout with data:', checkoutData)
     console.log('Paddle API URL:', `${paddleBaseUrl}/checkout/sessions`)
     console.log('Paddle API Key (first 10 chars):', paddleApiKey.substring(0, 10))
-    console.log('Environment variables check:', {
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-      PADDLE_RETURN_URL: process.env.PADDLE_RETURN_URL,
-      PADDLE_CANCEL_URL: process.env.PADDLE_CANCEL_URL,
-    })
 
     const paddleResponse = await fetch(`${paddleBaseUrl}/checkout/sessions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${paddleApiKey}`,
-        'Paddle-Version': '1',
       },
       body: JSON.stringify(checkoutData),
     })
 
     console.log('Paddle API response status:', paddleResponse.status)
-    console.log('Paddle API response headers:', Object.fromEntries(paddleResponse.headers))
 
     if (!paddleResponse.ok) {
       const errorText = await paddleResponse.text()
       console.error('Paddle API error response:', errorText)
       console.error('Request data sent:', checkoutData)
-      console.error('Response status:', paddleResponse.status)
-      console.error('Response headers:', Object.fromEntries(paddleResponse.headers))
       
       // Try to parse as JSON for better error handling
       let errorDetails
@@ -134,8 +136,7 @@ export async function POST(request: NextRequest) {
     console.log('Paddle checkout created:', paddleResult)
 
     return NextResponse.json({
-      checkoutId: paddleResult.data.id,
-      checkoutUrl: paddleResult.data.checkout_url,
+      checkoutUrl: paddleResult.data.url,
     })
   } catch (error) {
     console.error('Checkout error:', error)

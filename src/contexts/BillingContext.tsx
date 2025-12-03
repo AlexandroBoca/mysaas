@@ -62,11 +62,6 @@ export function BillingProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const refreshBilling = async () => {
-    setIsLoading(true)
-    await fetchBillingData()
-  }
-
   const upgradePlan = async (priceId: string) => {
     try {
       // Get user authentication
@@ -175,6 +170,11 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       console.error('Error opening customer portal:', error)
       throw error
     }
+  }
+
+  const refreshBilling = async () => {
+    setIsLoading(true)
+    await fetchBillingData()
   }
 
   useEffect(() => {

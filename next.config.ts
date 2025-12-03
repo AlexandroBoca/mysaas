@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' http://localhost:* https://sandbox-buy.paddle.com https://buy.paddle.com;"
+            value: "frame-ancestors 'self' https://mysaas-pearl.vercel.app https://sandbox-buy.paddle.com https://buy.paddle.com;"
           }
         ]
       }
@@ -22,15 +22,12 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    PADDLE_API_KEY: process.env.PADDLE_API_KEY,
-    PADDLE_VENDOR_ID: process.env.PADDLE_VENDOR_ID,
-    PADDLE_SECRET_KEY: process.env.PADDLE_SECRET_KEY,
-    NEXT_PUBLIC_PADDLE_VENDOR_ID: process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID,
     NEXT_PUBLIC_PADDLE_ENVIRONMENT: process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT,
+    NEXT_PUBLIC_PADDLE_CLIENT_TOKEN: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
+    PADDLE_API_KEY: process.env.PADDLE_API_KEY,
     PADDLE_WEBHOOK_SECRET: process.env.PADDLE_WEBHOOK_SECRET,
-    NEXT_PUBLIC_PADDLE_STARTER_PRICE_ID: process.env.NEXT_PUBLIC_PADDLE_STARTER_PRICE_ID,
-    NEXT_PUBLIC_PADDLE_PRO_PRICE_ID: process.env.NEXT_PUBLIC_PADDLE_PRO_PRICE_ID,
-    NEXT_PUBLIC_PADDLE_ENTERPRISE_PRICE_ID: process.env.NEXT_PUBLIC_PADDLE_ENTERPRISE_PRICE_ID,
+    PADDLE_RETURN_URL: process.env.PADDLE_RETURN_URL,
+    PADDLE_CANCEL_URL: process.env.PADDLE_CANCEL_URL,
   },
 };
 
